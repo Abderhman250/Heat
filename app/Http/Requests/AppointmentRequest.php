@@ -7,6 +7,8 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use App\Helpers\ApiResponse;
+use App\Rules\AppointmentValidation;
+use App\Rules\ValidSeatForAppointment;
 use Symfony\Component\HttpFoundation\Response;
 
 
@@ -26,6 +28,7 @@ class AppointmentRequest extends FormRequest
             $data['appointment_id'] =  $parameters['appointment_id'] ?? null;
         elseif ($route == "appointment.seat.point")
             $data['appointment_id'] =  $parameters['appointment_id'] ?? null;
+
         return  $data;
     }
 
@@ -49,7 +52,9 @@ class AppointmentRequest extends FormRequest
     {
 
         $route = $this->route()->getName();
- 
+        $user =  auth()->user();
+
+
         if ($route == "appointment.index")
             return [
                 "date" => ['required', 'date_format:Y-m-d'],
@@ -65,6 +70,12 @@ class AppointmentRequest extends FormRequest
         elseif ($route == "appointment.seat.point")
             return [
                 "appointment_id" => ['required', 'exists:appointments,id'],
+            ];
+        elseif ($route == "appointment.reserve")
+            return [
+                "appointment_id" => ['required', 'exists:appointments,id', new AppointmentValidation($user)],
+                "seat_point_id" => ['required', 'exists:seat_points,id',   new ValidSeatForAppointment($this->appointment_id)
+            ],
             ];
     }
 

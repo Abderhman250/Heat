@@ -10,10 +10,12 @@ use App\Http\Resources\AppointmentShowResource;
 use App\Http\Resources\SeatPointCollection;
 use App\Models\Appointment;
 use App\Models\Booking;
+use App\Models\BookingClassUser;
 use App\Models\SeatPoint;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use PHPUnit\TextUI\XmlConfiguration\Group;
 
 class AppointmentController extends Controller
@@ -77,7 +79,6 @@ class AppointmentController extends Controller
             'Successfully show appointment resource.',
             113
         );
-
     }
 
     /**
@@ -89,25 +90,49 @@ class AppointmentController extends Controller
     public function isReserve(AppointmentRequest $request, $id)
     {
         //
-        $appointments = Appointment::findOrFail($id);
+        $appointment = Appointment::findOrFail($id);
 
-        $is_reserve = true;
 
-        if ($appointments->start_time < now())
-            false;
+        // Check if the appointment has already started
+        if ($appointment->start_time < now()) {
+            return ApiResponse::success(
+                ['is_reserve' => false],
+                'The appointment has already started.',
+                120
+            );
+        }
 
-        $count = Booking::where('appointment_id', $id)->count();
+        // Check if the user has a valid booking for this class
+        $bookingClassUser = BookingClassUser::where([
+            'user_id' => auth()->id(),
+            'class_id' => $appointment->class_id,
+        ])->first();
 
-        if ($count >=  $appointments->max_participants)
-            return false;
+        // If no valid booking or no quantity left
+        if (!$bookingClassUser || $bookingClassUser->quantity <= 0) {
+            return ApiResponse::success(
+                ['is_reserve' => false],
+                'No valid booking found or quantity exhausted.',
+                121
+            );
+        }
 
+        // Check if the maximum participant limit for the appointment has been reached
+        $currentParticipants = Booking::where('appointment_id', $id)->count();
+        if ($currentParticipants >= $appointment->max_participants) {
+            return ApiResponse::success(
+                ['is_reserve' => false],
+                'The appointment has reached its maximum number of participants.',
+                122
+            );
+        }
+
+        // If all checks pass, the appointment can be reserved
         return ApiResponse::success(
-            ["is_reserve" => $is_reserve],
-            'Successfully response is reserve.',
-            116
+            ['is_reserve' => true],
+            'The appointment is available for reservation.',
+            123
         );
-        
-        return;
     }
 
     /**
@@ -140,6 +165,45 @@ class AppointmentController extends Controller
         return;
     }
 
+    public function reserve(AppointmentRequest $request)
+    {
+        $user = auth()->user();
+        $appointment = Appointment::findOrFail($request->appointment_id);
+
+
+        DB::beginTransaction();
+
+        try {
+
+            Booking::create([
+                'appointment_id' => $request->appointment_id,
+                'seat_id' => $request->seat_point_id,
+                'user_id' => $user->id,
+                'status' => 'confirmed',
+            ]);
+            $bookingClassUser = BookingClassUser::where([
+                'class_id' => $appointment->class->id,
+                'user_id' => $user->id,
+            ]);
+
+            if ($bookingClassUser) {
+                $bookingClassUser->decrement('quantity', 1);
+                $bookingClassUser->increment('class_completed');
+            }
+
+
+            DB::commit();
+
+            return ApiResponse::success([],'Successfully reservation.', 133);
+
+        } catch (\Throwable $e) {
+            DB::rollback();
+
+            Log::error('Failed to create booking: ' . $e->getMessage());
+
+            return response()->json(['error' => 'Booking failed, please try again later.'], 500);
+        }
+    }
 
     /**
      * Update the specified resource in storage.

@@ -12,8 +12,8 @@ class BookingClassUser extends Model
     protected $fillable = [
         'user_id',
         'class_id',
-        'booking_id',
         'quantity',
+        'class_completed'
     ];
 
     // Relationships

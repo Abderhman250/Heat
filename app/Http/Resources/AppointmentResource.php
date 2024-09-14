@@ -3,11 +3,13 @@
 namespace App\Http\Resources;
 
 use App\Models\Booking;
+use App\Models\BookingClassUser;
 use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class AppointmentResource extends JsonResource
 {
+    
     /**
      * Transform the resource into an array.
      *
@@ -51,6 +53,8 @@ class AppointmentResource extends JsonResource
             return false;
 
         $count = Booking::where('appointment_id', $this->id)->count();
+  
+        $user = auth()->user();
 
         if ($count >=  $this->max_participants)
             return false;

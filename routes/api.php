@@ -98,8 +98,9 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/{appointment_id}/is-reserve', [AppointmentController::class, 'isReserve'])->name('appointments.is_reserve');
        
         Route::get('/{appointment_id}/seat-point', [AppointmentController::class, 'seatPoint'])->name('appointment.seat.point');
+       
+        Route::post('/reserve', [AppointmentController::class, 'reserve'])->name('appointment.reserve');
 
-        
     });
  
 
@@ -113,8 +114,13 @@ Route::middleware(['auth:api'])->group(function () {
 
     Route::prefix('plans')->group(function () {
         
-        Route::get('/', [PlanController::class, 'index'])->name('plans.index');
+        Route::get('/', [PlanController::class, 'index'])->name('plan.index');
+        Route::get('/{plan_id}', [PlanController::class, 'historyPlans'])->name('plan.show');
+
     });
+
+    Route::get('/user/history-plans', [PlanController::class, 'historyPlans'])->name('plan.histor');
+
 
 });
  
