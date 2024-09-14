@@ -70,47 +70,6 @@ class Helper
         return strval('+' . $mobile_number);
     }
 
-    public static function sendVerification($phone, $idd = null)
-    {
-        if ($phone == "+962780822933" || $phone == "+962770358748" || $phone == "+962790925633") {
-            $code = 12345;
-        } else {
-            $code = mt_rand(10000, 99999);
-        }
-
-        try {
-            $id = config('services.twilio.id');
-            $token = config('services.twilio.token');
-            $url = "https://api.twilio.com/2010-04-01/Accounts/" . config('services.twilio.id') . "/Messages.json";
-            $data = array(
-                'Title' => 'Verification Code',
-                'From' => '+16178499854',
-                'To' => $phone,
-                'Body' => 'Your verification code is ' . $code,
-            );
-            $post = http_build_query($data);
-            $x = curl_init($url);
-            curl_setopt($x, CURLOPT_POST, true);
-            curl_setopt($x, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($x, CURLOPT_SSL_VERIFYPEER, true);
-            curl_setopt($x, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-            curl_setopt($x, CURLOPT_USERPWD, "$id:$token");
-            curl_setopt($x, CURLOPT_POSTFIELDS, $post);
-            $y = curl_exec($x);
-            curl_close($x);
-            if ($idd) {
-                SMSCode::insert(['user_id' => $idd, 'code' => $code, 'used' => 0, 'created_at' => now(), 'updated_at' => now()]);
-            } else {
-                SMSCode::insert(['user_id' => Auth('api')->user()->id, 'code' => $code, 'used' => 0, 'created_at' => now(), 'updated_at' => now()]);
-            }
-
-            return true;
-        } catch (\Exception $e) {
-            return false;
-        }
-    }
-
-
 
     public static function sendNotification($title, $body, $aid, $destination)
     {
@@ -211,4 +170,7 @@ class Helper
         $max = pow(10, $digits) - 1;    // Maximum value for the desired number of digits
         return str_pad(mt_rand($min, $max), $digits, '0', STR_PAD_LEFT);
     }
+
+
+    
 }

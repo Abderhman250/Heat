@@ -13,20 +13,19 @@ class UsersTableSeed extends Seeder
     public function run()
     {
         DB::table('users')->insert([
-            'phone' => '798006704',
+            "username"=>"shallan",
             'first_name' => 'The',
             'last_name' => 'doctor',
+            'phone' => '798006704',
             'country_code' => '+962',
             'password' => bcrypt('aabb1986'),
             'gender' => 1,
-            'country_id' => 2,
-            'city_id' => 62037,
             'email' => 'tareq@mail.com',
             'dob' => '1996-12-17',
-            'is_admin' => 1,
-            'role' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
+
+   
     }
 }

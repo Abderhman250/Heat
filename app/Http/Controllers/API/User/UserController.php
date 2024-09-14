@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\UserRequest;
 use App\Http\Resources\UserResource;
 
-use App\User;
+use App\Models\User;
 use App\MobileToken;
 
 use Illuminate\Http\Request;
@@ -30,8 +30,8 @@ class UserController extends Controller
     {
         //
         $user_id =  Auth::id();
-        $user = User::with(['intrest', 'country', 'city'])->find($user_id);
-        return ApiResponse::success(new UserResource($user), "Successfully retrieved user data");
+        $user = User::with(['bookings'])->find($user_id);
+        return ApiResponse::success(new UserResource($user), "Successfully retrieved user data",101,200);
     }
 
     /**
@@ -61,47 +61,26 @@ class UserController extends Controller
         $user = Auth::user();
         $userId = $user->id;
         $userData = [];
-        $gender = ["male"=>2,'female'=>1,'organization'=>-1];
+        $gender = ["male"=>2,'female'=>1];
 
-        if ($request->hasFile('photo')) {
-            $photoPath = Helper::uploadToSpaceOptimized($request->file('photo'), 'app_content');
-            $userData['photo'] = $photoPath;
-        }
+        if ($request->hasFile('photo')) 
+            $photo = Helper::uploadToSpaceOptimized($request->file('photo'), 'app_content');
+ 
+      
         $request =  $request->validated();
 
-        // Update user information
         $userData = [
             'phone' => $request['phone'],
             'first_name' =>  $request['first_name'],
             'last_name' => $request['last_name'],
             'dob' => $request['date_of_birth'] ?? null,
-            'country_id' => $request['country_id'],
-            'city_id' => $request['city_id'],
+            'gender'=>$gender[$request['gender']],
+            'photo'=>$photo
         ];
-
-        if (!$user->completing_info)
-            $userData =  [
-                "phone" => $request['phone'],  // Corrected the format of min and max rules
-                'gender' => $gender[$request["gender"]],
-                'first_name' => $request['first_name'],
-                'last_name' => $request['last_name'],
-                'country_code' => $request['country_code'],
-                'org_name' => $request['org_name'] ?? null,
-                'country_id' => $request['country_id'],
-                'dob' => $request['date_of_birth'] ?? null,
-                'city_id' => $request['city_id'],
-                'completing_info' =>true,
-            ];
-
-
-
+ 
         User::where('id', $userId)->update($userData);
 
         $user = User::findOrFail($userId);
-
-        $intrest = collect($request['interests'] ?? []);
-
-        $user->intrest()->sync($intrest);
 
         return ApiResponse::success(new UserResource($user), "Successfully updated profile");
     }

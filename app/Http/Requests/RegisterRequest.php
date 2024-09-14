@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\User;
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -36,9 +36,10 @@ class RegisterRequest extends FormRequest
     {
         $userEmail = Rule::unique('users', 'email')->whereNull('deleted_at');
         $userPhone = Rule::unique('users', 'phone')->whereNull('deleted_at');
-        $userName = Rule::exists('users', 'username')->whereNull('deleted_at');
+        $userName = Rule::unique('users', 'username')->whereNull('deleted_at');
 
-        $gender = ["male",'female','organization'];
+        $gender = ["male",'female'];
+ 
         return [
             "email" => ["required", "email", $userEmail],
             'username'=>["required",$userName,'min:3'],
@@ -46,8 +47,8 @@ class RegisterRequest extends FormRequest
             'password_confirmation'=>["required","same:password"],
             "phone" => ["required" ,$userPhone],  // Corrected the format of min and max rules
             'gender' => ['required',Rule::in($gender)],
-            'first_name' => ['required_if:gender,male,female,','regex:/^[a-zA-Zء-ي_ -]+$/u'],
-            'last_name' => ['required_if:gender,male,female,','regex:/^[a-zA-Zء-ي_ -]+$/u'],
+            'first_name' => ["required",'regex:/^[a-zA-Zء-ي_ -]+$/u'],
+            'last_name' => ["required",'regex:/^[a-zA-Zء-ي_ -]+$/u'],
             'date_of_birth'=>['nullable','date'],
          ];
  

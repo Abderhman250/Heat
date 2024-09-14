@@ -23,11 +23,6 @@ class LoginRequest extends FormRequest
             if (isset($data['email']))
                 $data['login_method'] = 'email';
 
-            if (isset($data['phone']))
-                $data['login_method'] = 'phone';
-
-            if (isset($data['username']))
-                $data['login_method'] = 'username';
         }
 
         return $data;
@@ -50,9 +45,8 @@ class LoginRequest extends FormRequest
 
         if ($route == "auth.login")
             return [
-                "email" => ["nullable", "email", new EmailOrPhone('phone'), new ValidUser()],
-                "username" => ["nullable", "string", new ValidUser()],
-                "phone" => ["nullable", new ValidUser()],  // Corrected the format of min and max rules
+                "email" => ["nullable", "email", new ValidUser()],
+ 
                 "password" => ["required"],
                 "login_method" => ["required"],
             ];

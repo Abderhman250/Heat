@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -10,10 +10,15 @@ use App\Helper\Helper;
 use Illuminate\Notifications\Notifiable;
 use App\Country;
 use App\City;
+use App\Models\Booking;
+use App\Models\Coache;
+use App\Models\Transaction;
+use App\Models\UserPlan;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, Notifiable;
+    use HasApiTokens, Notifiable, HasFactory;
     use SoftDeletes;
 
     /**
@@ -22,151 +27,45 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'is_active', 'username', 'status',
-        'phone', 'first_name', 'last_name', 'gender', 'country_id', 'city_id', 'otp', 'dob', 'completing_info',
-        'google_id', 'facebook_id', 'apple_id','org_name','photo'
+        'username',
+        'first_name',
+        'last_name',
+        'phone',
+        'country_code',
+        'gender',
+        'email',
+        'dob',
+        'photo',
+        'password',
+        'facebook_id',
+        'is_coache',
+        'is_active',
+        'otp'
     ];
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = [
-        'password', 'remember_token',
-    ];
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
-    public function intrest()
+    public function plans()
     {
-
-        return $this->belongsToMany(Interests::class, 'user_interst', 'user_id', 'interest_id');
+        return $this->belongsToMany(Plan::class, 'user_plans')
+            ->withPivot('start_date', 'end_date')
+            ->withTimestamps();
+    }
+    public function coach()
+    {
+        return $this->hasOne(Coache::class);
     }
 
-    public function followers()
+    public function bookings()
     {
-        return $this->belongsToMany(User::class, 'followers', 'user_id', 'follower_id');
+        return $this->hasMany(Booking::class);
     }
 
-    public function followings()
+    public function userPlans()
     {
-        return $this->belongsToMany(User::class, 'followers', 'follower_id', 'user_id');
+        return $this->hasMany(UserPlan::class);
     }
 
-    public function followedPolls()
+    public function transactions()
     {
-        return $this->belongsToMany(Poll::class, 'follow_poll', 'user_id', 'poll_id')->withTimestamps();
+        return $this->hasMany(Transaction::class);
     }
-
-    public function userFollowings()
-    {
-        return $this->hasMany(User::class, 'followers', 'follower_id', 'user_id');
-    }
-
-    public function findForPassport($username)
-    {
-        return $this->where('phone', $username)->first();
-    }
-
-    public function poll()
-    {
-        return $this->hasMany('App\Poll', 'user_id', 'id');
-    }
-
-    public function country()
-    {
-        return $this->belongsTo(Country::class, 'country_id', 'id');
-    }
-
-    public function city()
-    {
-        return $this->belongsTo(City::class, 'city_id', 'id');
-    }
-
-    public function saves()
-    {
-        return $this->hasMany('App\Save', 'user_id', 'id');
-    }
-
-    public function votes()
-    {
-        return $this->hasMany('App\Vote', 'user_id', 'id');
-    }
-
-    public function invite()
-    {
-        return $this->hasMany('App\GroupInvite', 'user_id', 'id');
-    }
-
-    public function comments()
-    {
-        return $this->hasMany('App\Comment', 'user_id', 'id');
-    }
-
-    public function getCreatedAttribute()
-    {
-        return $this->created_at->toDateString();
-    }
-    public function token()
-    {
-        return $this->hasOne('App\MobileToken', 'user_id', 'id');
-    }
-
-    /**
-     * Generate unique OTP
-     *
-     * @return string A unique OTP
-     */
-    public static function generateUniqueOTP(): string
-    {
-        $otp = Helper::generateRandomNumber();
-
-        // Check if the generated OTP already exists in the users table
-        if (self::isOTPUnique($otp))
-            return $otp; // Unique OTP found
-        else
-            return self::generateUniqueOTP(); // Regenerate OTP recursively
-
-    }
-
-    /**
-     * check if OTP is exists or not
-     *
-     * @param string $otp
-     * @return boolean
-     */
-    private static function isOTPUnique(string $otp): bool
-    {
-        return !User::where('otp', $otp)->exists();
-    }
-    
-    public function blocks()
-    {
-        return $this->hasMany(UserBlock::class, 'user_id');
-    }
-    
-  
-    public function my_blocks()
-    {
-        return $this->hasMany(UserBlock::class, 'blocked_user_id');
-    }
-    
-
-    public function scopeBlockedUserIds($query, $userId)
-    {
-    
-        return $query->whereHas('blocks', function ($query) use ($userId) {
-                $query->where('blocked_user_id', $userId);
-            })
-            ->orWhereHas('my_blocks', function ($query) use ($userId) {
-                $query->where('user_id', $userId);
-            });
-    }
-    
 }

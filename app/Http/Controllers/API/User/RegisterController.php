@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers\API\User;
 
+use App\Helper\Helper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterRequest;
-use App\User;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Helpers\ApiResponse;
 use App\Interests;
 use Illuminate\Support\Facades\Mail;
 
 use App\Mail\OtpEmail;
+use App\Models\Level;
 
 class RegisterController extends Controller
 {
@@ -21,14 +23,13 @@ class RegisterController extends Controller
      */
     public function register(RegisterRequest $request)
     {    
-        
-        $request =  $request->validated();
-
         $gender = ["male"=>2,'female'=>1];
-
-        $otp = User::generateUniqueOTP();
-
-        $data=  User::create([
+        
+ 
+        $request =  $request->validated();
+        $level =  Level::where('required_classes',">",0)->first();
+        
+        User::create([
             "email" =>   $request["email"],
             "username"=>$request["username"],
             "password" =>   bcrypt($request["password"]),
@@ -36,22 +37,13 @@ class RegisterController extends Controller
             'first_name' =>  $request["first_name"] ??  null,
             'last_name' =>  $request["last_name"]??  null,
             'gender' => $gender[$request["gender"]],
- 
-            'country_id'=>$request["country_id"],
             'dob'=>$request["date_of_birth"]?? null,
-            'city_id'=>$request["city_id"],
+            "level_id"=>$level->id,
  
         ]);
 
-        Mail::to($request['email'])->send(new OtpEmail($otp));
-
-        $user=  User::findOrFail($data['id']);
  
-        $intrest = collect($request['interests']?? []);
-  
-        $user->intrest()->sync( $intrest );
-
-       return ApiResponse::success([]);
+       return ApiResponse::success([],"Registration completed successfully.",100,201);
     }
  
 }

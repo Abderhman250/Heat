@@ -66,7 +66,6 @@ class Kernel extends HttpKernel
         'StatusMiddleware' => \App\Http\Middleware\StatusMiddleware::class,
         'SuperAdminMiddleware' => \App\Http\Middleware\SuperAdminMiddleware::class,
         'locale' => \App\Http\Middleware\SetLocale::class,
-        'check.completing_info' => \App\Http\Middleware\CheckCompletingInfo::class,
-
+ 
     ];
 }

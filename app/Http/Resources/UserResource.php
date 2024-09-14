@@ -16,16 +16,7 @@ class UserResource extends JsonResource
     public function toArray($request)
     {
         $route = $request->route()->getName();
-
-        $intrests = [];
-        foreach ($this->intrest ?? [] as $intrest) {
-            $intrests[] =  [
-                'id' => $intrest->id,
-                'name' => $intrest->name
-            ];
-        }
-        $Followers =  Followers::where('follower_id', $this->id) ?? collect([]);
-       
+ 
         $data = [
             'id' => $this->id,
             'first_name' => $this->first_name,
@@ -33,32 +24,17 @@ class UserResource extends JsonResource
             'phone' => $this->phone,
             'username' => $this->username,
             "date_of_birth"=>$this->dob ,
-            'country_code' => $this->country_code,
             'is_active' => $this->is_active,
-            'org_name'=>$this->org_name,
             'photo' => $this->photo,
-            'country' => [  "id" =>  $this->country->id ?? null,"name"=>$this->country->name ?? null],
-            'city' => [  "id" =>  $this->city->id ?? null,"name"=>$this->city->name ?? null],
             'gender' => $this->gender ,
             'email' => $this->email,
-            'followers_count'=> $Followers->count() ?? 0 ,
-            'intrest' => $intrests,
-            "completing_info" => (bool) $this->completing_info,
         ];
-
-        if($route === "info.by.user") 
-          $data["is_follow"]= $this->getIsFollower();
+ 
 
         return $data;
     }
 
 
 
-    private function  getIsFollower()
-    {
-
-        return Followers::where('user_id', Auth::id())
-            ->where('follower_id', $this->id)
-            ->exists() ?? False;
-    }
+ 
 }

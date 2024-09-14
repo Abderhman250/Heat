@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\AppointmentController;
 use App\Http\Controllers\API\CountryController;
 use App\Http\Controllers\API\FollowerController;
 use App\Http\Controllers\API\Group\GroupController;
@@ -10,6 +11,9 @@ use App\Http\Controllers\API\User\LoginController;
 
 use App\Http\Controllers\API\InterestsController as Interests;
 use App\Http\Controllers\API\Chat\MessageController;
+use App\Http\Controllers\API\CoachController;
+use App\Http\Controllers\API\HomeController;
+use App\Http\Controllers\API\PlanController;
 use App\Http\Controllers\API\Poll\CommentController;
 use App\Http\Controllers\API\Poll\FollowPollController;
 use App\Http\Controllers\API\Poll\LookupPollController;
@@ -18,7 +22,7 @@ use App\Http\Controllers\API\Poll\VoteController;
 use App\Http\Controllers\API\User\BlockController;
 use App\Http\Controllers\API\User\OtpController as OtpController;
 use App\Http\Controllers\API\User\UserController;
-use App\User;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -57,47 +61,60 @@ Route::prefix('auth')->group(function () {
     Route::post('/verify-otp',  [OtpController::class, 'verifyOtp'])->name('verifyOtp.post');
     Route::post('/send-otp',  [OtpController::class, 'sendOtp'])->name('sendOtp.post');
 });
-
-Route::get('/country',  [CountryController::class, 'country'])->name('country.get');
-Route::get('/city/{country_id}',  [CountryController::class, 'city'])->name('city.get');
-
-
-Route::get('/interests',  [Interests::class, 'index'])->name('interests.get');
-
-
-Route::middleware(['auth:api','check.completing_info'])->group(function () {
+ 
+ 
+ 
+Route::middleware(['auth:api'])->group(function () {
+    
     Route::put('/change_password',  [UserController::class, 'changePassword'])->name('change.password');
-
-
-    Route::get('invaite-follower', [FollowerController::class, 'invaite_follower'])->name('followers.invaite');
-
-    // Route::get('test2', [FollowerController::class, 'test'])->name('followers');
-
-    Route::get('followers', [FollowerController::class, 'followers'])->name('followers');
-    Route::get('followings', [FollowerController::class, 'followings'])->name('followings');
-    Route::post('follow/{id}', [FollowerController::class, 'follow'])->name('follow');
-    Route::post('unfollow/{id}', [FollowerController::class, 'unfollow'])->name('unfollow');
+   
+    Route::get('/home', [HomeController::class, 'homePageData'])->name('home.page'); 
 
     Route::group(['prefix' => 'user'], function () {
-        Route::get('followers/by-user/{id}', [FollowerController::class, 'followersByUser'])->name('followers.by.user');
-        Route::get('followings/by-user/{id}', [FollowerController::class, 'followingsByUser'])->name('following.by.user');
+      
         Route::get('info-by-user/{user_id}', [UserController::class, 'infoByUser'])->name('info.by.user');
         
-        // Route::get('invite/{id}', [GroupController::class, 'groups'])->name('groups');
         Route::get('/info', [UserController::class, 'info'])->name('user.info');
+      
         Route::post('/profile', [UserController::class, 'updateInfo'])->name('user.edit.profile');
 
         Route::get('/mobile-token', [UserController::class, 'mobileToken'])->name('user.mobileToken');
+      
         Route::post('/mobile-token', [UserController::class, 'setMobileToken'])->name('user.setMobileToken');        
+      
         Route::post('/send-notification',[UserController::class, 'sendNotification'])->name('user.sendNotification');
+      
         Route::get('/notification',[UserController::class, 'getNotification'])->name('user.getNotification');
-
- 
- 
-
- 
- 
- 
+       
     });
+
+
+    Route::group(['prefix' => 'appointment'], function () {
+
+        Route::get('/', [AppointmentController::class, 'index'])->name('appointment.index');
+
+        Route::get('/{appointment_id}', [AppointmentController::class, 'show'])->name('appointment.show');
+       
+        Route::get('/{appointment_id}/is-reserve', [AppointmentController::class, 'isReserve'])->name('appointments.is_reserve');
+       
+        Route::get('/{appointment_id}/seat-point', [AppointmentController::class, 'seatPoint'])->name('appointment.seat.point');
+
+        
+    });
+ 
+
+    Route::group(['prefix' => 'coach'], function () {
+
+        Route::get('/', [CoachController::class, 'index'])->name('coach.index');
+
+        Route::get('/{coach_id}', [CoachController::class, 'show'])->name('coach.show');
+
+    });
+
+    Route::prefix('plans')->group(function () {
+        
+        Route::get('/', [PlanController::class, 'index'])->name('plans.index');
+    });
+
 });
  
