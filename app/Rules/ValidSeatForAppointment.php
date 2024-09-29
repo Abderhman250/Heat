@@ -9,44 +9,48 @@ use Illuminate\Contracts\Validation\Rule;
 
 class ValidSeatForAppointment implements Rule
 {
-    protected $appointmentId;
+    protected $seatPointId;
 
-    public function __construct($appointmentId)
+    public function __construct($seatPointId)
     {
-        $this->appointmentId = $appointmentId;
+        $this->seatPointId = $seatPointId;
     }
 
     public function passes($attribute, $value)
     {
-        $appointment = Appointment::find($this->appointmentId);
- 
-         if (!$appointment)
+        $appointment = Appointment::find($value);
+
+        if (!$appointment)
             return false;
- 
-         $seatPoint = SeatPoint::find($value);
- 
- 
-        if (!$seatPoint || $this->isSeatAvailableForAppointment($seatPoint, $appointment)) {
-             return false;
+
+        if ($this->isSeatAvailableForAppointment($appointment)) {
+            return false;
         }
 
         return true;
     }
 
-    protected function isSeatAvailableForAppointment($seatPoint, $appointment)
+    protected function isSeatAvailableForAppointment($appointment)
     {
-        
-       if($seatPoint->class_id !== $appointment->class_id)
-         return false;
- 
-        return  Booking::where('appointment_id',  $appointment->id)
-        ->where('seat_id', $seatPoint->id)
-        ->exists();
-   
+
+        if ($appointment->class->seat_selection_required) {
+            return  !Booking::where('appointment_id',  $appointment->id)
+                ->exists();
+        }
+
+        $seatPoint = SeatPoint::find($this->seatPointId);
+
+        if ($seatPoint->class_id !== $appointment->class_id)
+            return false;
+
+
+        return  !Booking::where('appointment_id',  $appointment->id)
+            ->where('seat_id', $seatPoint->id)
+            ->exists();
     }
 
 
-  
+
 
     public function message()
     {

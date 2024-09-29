@@ -7,7 +7,9 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use App\Helpers\ApiResponse;
+use App\Models\Appointment;
 use App\Rules\AppointmentValidation;
+use App\Rules\LookupRule;
 use App\Rules\ValidSeatForAppointment;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -28,6 +30,8 @@ class AppointmentRequest extends FormRequest
             $data['appointment_id'] =  $parameters['appointment_id'] ?? null;
         elseif ($route == "appointment.seat.point")
             $data['appointment_id'] =  $parameters['appointment_id'] ?? null;
+        elseif ($route == "appointment.coach")
+            $data['coach_id'] =  $parameters['coach_id'] ?? null;
 
         return  $data;
     }
@@ -58,6 +62,12 @@ class AppointmentRequest extends FormRequest
         if ($route == "appointment.index")
             return [
                 "date" => ['required', 'date_format:Y-m-d'],
+                "filter_id" => ['nullable',new LookupRule()]
+            ];
+        if ($route == "appointment.coach")
+            return [
+                "coach_id" => ['required', 'exists:coaches,id'],
+                "date" => ['required', 'date_format:Y-m-d'],
             ];
         elseif ($route == "appointment.show")
             return [
@@ -71,12 +81,31 @@ class AppointmentRequest extends FormRequest
             return [
                 "appointment_id" => ['required', 'exists:appointments,id'],
             ];
-        elseif ($route == "appointment.reserve")
-            return [
-                "appointment_id" => ['required', 'exists:appointments,id', new AppointmentValidation($user)],
-                "seat_point_id" => ['required', 'exists:seat_points,id',   new ValidSeatForAppointment($this->appointment_id)
-            ],
+        elseif ($route == "appointment.reserve") {
+            $appointment = Appointment::find($this->appointment_id);
+
+            $rules = [
+                "appointment_id" => [
+                    'required',
+                    'exists:appointments,id',
+                    new AppointmentValidation($this->user()),
+                    new ValidSeatForAppointment($this->seat_point_id)
+                ],
+                "seat_point_id" => [
+                    'nullable',
+                    'exists:seat_points,id'
+                ],
             ];
+
+            if ($appointment && $appointment->class->seat_selection_required) {
+                $rules['seat_point_id'] = [
+                    'required',
+                    'exists:seat_points,id'
+                ];
+            }
+        }
+
+        return [];
     }
 
     protected function failedValidation(Validator $validator)

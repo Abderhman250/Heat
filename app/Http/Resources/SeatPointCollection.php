@@ -26,8 +26,9 @@ class SeatPointCollection extends ResourceCollection
 
         $grouped = $this->collection->groupBy('line');
         // return $this->collection;
-        return $grouped->mapWithKeys(function ($points, $line) {
+         $data =  $grouped->mapWithKeys(function ($points, $line) {
             // Format the data
+         
             return $points->map(function ($point) {
 
                 return [
@@ -40,6 +41,8 @@ class SeatPointCollection extends ResourceCollection
                 ];
             });
         })->all();
+
+        return $data;
     }
 
     private function is_booking($point_id)

@@ -16,10 +16,12 @@ class CreatePlansTable extends Migration
         Schema::create('plans', function (Blueprint $table) {
             $table->id();
             $table->string('plan_name');
+            $table->string('type');
             $table->foreignId('class_id')->constrained('classes')->onDelete('cascade');
             $table->integer('total_classes');
             $table->text('description')->nullable();
             $table->string('photo')->nullable();
+            $table->double('price')->comment('Price in USD');
             $table->timestamps();
         });
     }

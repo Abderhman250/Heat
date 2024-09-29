@@ -7,7 +7,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\AppointmentRequest;
 use App\Http\Resources\AppointmentResource;
 use App\Http\Resources\AppointmentShowResource;
+use App\Http\Resources\bookingResource;
 use App\Http\Resources\SeatPointCollection;
+use App\Lookup;
 use App\Models\Appointment;
 use App\Models\Booking;
 use App\Models\BookingClassUser;
@@ -20,6 +22,50 @@ use PHPUnit\TextUI\XmlConfiguration\Group;
 
 class AppointmentController extends Controller
 {
+
+
+    public function filters()
+    {
+
+        $Lookup =  Lookup::select('id', 'type', 'key', 'value', 'description')
+            ->where('type', "=", 'FILTER')
+            ->get();
+
+        return ApiResponse::success(
+            [
+                "filter" =>  $Lookup
+            ],
+            'Successfully listed dates.',
+            110
+        );
+    }
+
+    public function date(Request $request)
+    {
+        $start = Carbon::now();
+
+        if ($request->has('start_date') && Carbon::hasFormat($request->start_date, 'Y-m-d')) {
+            $start = Carbon::parse($request->start_date);
+        }
+
+        $end = $start->copy()->addDays(7);
+        $dates = [];
+
+        while ($start->lte($end)) {
+            $dates[] = $start->toDateString();
+            $start->addDay();
+        }
+
+        return ApiResponse::success(
+            [
+                "date" => $dates
+            ],
+            'Successfully listed dates.',
+            110
+        );
+    }
+
+
     /**
      * Display a listing of the resource.
      *
@@ -27,16 +73,68 @@ class AppointmentController extends Controller
      */
     public function index(AppointmentRequest $request)
     {
+        $morning =  Lookup::where('key', '=', 'FILTER_MORNING')->first();
+        $afternoon =  Lookup::where('key', '=', 'FILTER_AFTERNOON')->first();
+        $evening =  Lookup::where('key', '=', 'FILTER_EVENING')->first();
+
+        $perPage = (int) $request->query('per_page', 5);
+        $date = Carbon::parse($request->date);
+
+        $startOfDay = $date->startOfDay()->format('Y-m-d H:i:s');
+        $endOfDay = $date->endOfDay()->format('Y-m-d H:i:s');
+
+        // Initialize the query for appointments
+        $appointments = Appointment::where('start_time', '>', $startOfDay)
+            ->where('start_time', '<', $endOfDay);
+
+        // Filter based on time of day
+
+
+
+        if ($request->has('filter_id'))
+            switch ($request->filter_id) {
+                case $morning->id:
+                    $appointments->whereBetween('start_time', [(clone $date)->setTime(5, 0), (clone $date)->setTime(11, 0)]);
+                    break;
+                case $afternoon->id:
+                    $appointments->whereBetween('start_time', [(clone $date)->setTime(11, 0), (clone $date)->setTime(15, 0)]);
+                    break;
+                case $evening->id:
+                    $appointments->whereBetween('start_time', [(clone $date)->setTime(15, 0), $endOfDay]);
+                    break;
+            }
+
+        // Order and paginate the appointments
+        $appointments = $appointments->orderBy('start_time', 'asc')->paginate($perPage);
+
+        return ApiResponse::success(
+            [
+                "collect" => AppointmentResource::collection($appointments),
+                'pagination' => ApiResponse::paginationData($appointments),
+            ],
+            'Successfully listed appointment resources.',
+            112
+        );
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function coach(AppointmentRequest $request, $coach_id)
+    {
         $perPage = (int) $request->query('per_page', 5);
         $date =  Carbon::parse($request->date);
-        $start = $date->format('Y-m-d H:i:s');
+        $start = $date->startOfDay()->format('Y-m-d H:i:s');
         $end = $date->endOfDay()->format('Y-m-d H:i:s');
 
         $appointments = Appointment::where('start_time', '>', $start)
             ->where('start_time', '<', $end)
-            ->orderBy('start_time', 'asc')
-            ->paginate($perPage);
+            ->where('coach_id', '=', $coach_id);
 
+
+        $appointments =   $appointments->orderBy('start_time', 'asc')->paginate($perPage);
 
         return ApiResponse::success(
 
@@ -46,10 +144,8 @@ class AppointmentController extends Controller
 
             ],
             'Successfully list appointment resource.',
-            112
+            126
         );
-
-        return;
     }
 
     /**
@@ -152,9 +248,16 @@ class AppointmentController extends Controller
 
             ->paginate($perPage);
 
+        $data = [];
+        $SeatPointCollection =  SeatPointCollection::collection($seatPoints->groupBy('line'));
+
+        foreach ($SeatPointCollection as $key => $value)
+            $data[][$key] =   $value;
+
+
         return ApiResponse::success(
             [
-                "collect" => SeatPointCollection::collection($seatPoints->groupBy('line')),
+                "collect" => $data,
                 'pagination' => ApiResponse::paginationData($seatPoints),
 
             ],
@@ -167,9 +270,11 @@ class AppointmentController extends Controller
 
     public function reserve(AppointmentRequest $request)
     {
+        $seat_point_id = null;
         $user = auth()->user();
         $appointment = Appointment::findOrFail($request->appointment_id);
-
+        if (($appointment->class->seat_selection_required === true))
+            $seat_point_id =  $request->seat_point_id;
 
         DB::beginTransaction();
 
@@ -177,7 +282,7 @@ class AppointmentController extends Controller
 
             Booking::create([
                 'appointment_id' => $request->appointment_id,
-                'seat_id' => $request->seat_point_id,
+                'seat_id' => $seat_point_id,
                 'user_id' => $user->id,
                 'status' => 'confirmed',
             ]);
@@ -194,8 +299,7 @@ class AppointmentController extends Controller
 
             DB::commit();
 
-            return ApiResponse::success([],'Successfully reservation.', 133);
-
+            return ApiResponse::success([], 'Successfully reservation.', 133);
         } catch (\Throwable $e) {
             DB::rollback();
 
@@ -204,6 +308,8 @@ class AppointmentController extends Controller
             return response()->json(['error' => 'Booking failed, please try again later.'], 500);
         }
     }
+
+
 
     /**
      * Update the specified resource in storage.

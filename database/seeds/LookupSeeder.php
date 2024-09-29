@@ -30,7 +30,27 @@ class LookupSeeder extends Seeder
                 'description' => 'This type of gender is male',
             ],
  
-           
+            [
+                'type' => 'FILTER',
+                'key' => 'FILTER_MORNING',
+                'value' => 'morning ',
+                'column_id' => 'filter_id',
+                'description' => 'This type of filter appointment is morning ',
+            ],
+            [
+                'type' => 'FILTER',
+                'key' => 'FILTER_AFTERNOON',
+                'value' => 'afternoon',
+                'column_id' => 'filter_id',
+                'description' => 'This type of filter appointment is afternoon ',
+            ],
+            [
+                'type' => 'FILTER',
+                'key' => 'FILTER_EVENING',
+                'value' => 'evening',
+                'column_id' => 'filter_id',
+                'description' => 'This type of filter appointment is evening',
+            ],
         ];
     
         foreach ($data_default as $data) {

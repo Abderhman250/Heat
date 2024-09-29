@@ -26,9 +26,16 @@ class PlanFactory extends Factory
                 'Endurance Plan',
                 'Flexibility Plan'
             ]),
+            'type'=>$this->faker->randomElement([
+                'First Timer Exclusive Offer',
+                'Class Packages',
+                'Memberships',
+                'Ride Intro Offers - Now Open @Weho'
+            ]),
             'class_id' => ClassModel::inRandomOrder()->first()->id,
             'total_classes' => $this->faker->numberBetween(5, 50),
             'description' => $this->faker->paragraph,
+            'price'=> $this->faker->numberBetween(51, 250),
             'photo' => $this->faker->imageUrl(640, 480, 'sports', true),
         ];
     }

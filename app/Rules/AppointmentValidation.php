@@ -31,16 +31,18 @@ class AppointmentValidation implements Rule
 
         // Check if the maximum participant limit for the appointment has been reached
         $currentParticipants = Booking::where('appointment_id', $appointment->id)->count();
+
         if ($currentParticipants >= $appointment->max_participants) {
             return false;
         }
+       
 
         // Check if the user has a valid booking for this class
         $bookingClassUser = BookingClassUser::where([
             'user_id' => $this->user->id,
             'class_id' => $appointment->class_id,
         ])->first();
-
+         
         if (!$bookingClassUser || $bookingClassUser->quantity <= 0) {
             return false;
         }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\AppointmentController;
+use App\Http\Controllers\API\BookingController;
 use App\Http\Controllers\API\CountryController;
 use App\Http\Controllers\API\FollowerController;
 use App\Http\Controllers\API\Group\GroupController;
@@ -93,6 +94,7 @@ Route::middleware(['auth:api'])->group(function () {
 
         Route::get('/', [AppointmentController::class, 'index'])->name('appointment.index');
 
+
         Route::get('/{appointment_id}', [AppointmentController::class, 'show'])->name('appointment.show');
        
         Route::get('/{appointment_id}/is-reserve', [AppointmentController::class, 'isReserve'])->name('appointments.is_reserve');
@@ -100,9 +102,22 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/{appointment_id}/seat-point', [AppointmentController::class, 'seatPoint'])->name('appointment.seat.point');
        
         Route::post('/reserve', [AppointmentController::class, 'reserve'])->name('appointment.reserve');
+       
+ 
+    });
+
+    Route::get('/appointment-coach/{coach_id}', [AppointmentController::class, 'coach'])->name('appointment.coach');
+    Route::get('/appointment-filters', [AppointmentController::class, 'filters'])->name('appointment.filters');
+    Route::get('/date', [AppointmentController::class, 'date'])->name('appointment.date');
+
+
+    Route::group(['prefix' => 'booking'], function () {
+
+ 
+        Route::get('/', [BookingController::class, 'index'])->name('booking.index');
 
     });
- 
+    
 
     Route::group(['prefix' => 'coach'], function () {
 

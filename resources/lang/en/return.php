@@ -7,7 +7,7 @@
         'userNotActive' => 'Phone number or password are incorrect',
         'groupCreated' => 'Group has been created successfully',
         'inviteSent' => 'An invitation has been sent successfully',
-        'group404' => 'Group not found',
+
         'invitationAccepted' => 'Invitation has been accepted',
         'invitationCanceled' => 'Invitation has been canceled',
         'groupDelete' => 'You have exited the gorup',

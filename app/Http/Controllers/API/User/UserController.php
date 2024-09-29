@@ -62,7 +62,7 @@ class UserController extends Controller
         $userId = $user->id;
         $userData = [];
         $gender = ["male"=>2,'female'=>1];
-
+        $photo =null;
         if ($request->hasFile('photo')) 
             $photo = Helper::uploadToSpaceOptimized($request->file('photo'), 'app_content');
  

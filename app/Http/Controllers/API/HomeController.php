@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Appointment;
 use App\Models\Booking;
 use App\Models\BookingClassUser;
+use App\Models\Level;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -35,18 +36,20 @@ class HomeController extends Controller
         $classAttended = $BookingClassUser->count('class_completed');
         $mostVisitedClass = $BookingClassUser->first();
 
+        $level =  Level::where('required_classes', '>=', $classAttended)->first();
+
         return ApiResponse::success(
 
             [
+                'level' => $level->title_levels,
                 'registration_date' => $registrationDate,
                 'coach_count' => $coachCount,
-                'class_attended' => isset($classAttended ) ? $classAttended  : 0,
+                'class_attended' => isset($classAttended) ? $classAttended  : 0,
                 'most_visited_class' => isset($mostVisitedClass->class->name) ? $mostVisitedClass->class->name : null,
-             ]
-           , 
-          'Successfully list hoem page.',
-           113
-       );
+            ],
+            'Successfully list hoem page.',
+            113
+        );
         return response()->json();
     }
 }
