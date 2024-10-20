@@ -25,16 +25,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Validator::extend('valid_choice_for_poll', function ($attribute, $value, $parameters, $validator) {
-            
-            $pollId = $parameters[0] ?? null;
-
-            if (!$pollId)
-                return false;
-
-            return  Choice::where('id', $value)
-                ->where('poll_id', $pollId)
-                ->exists();
-        });
+      
     }
 }

@@ -89,8 +89,6 @@ class AppointmentController extends Controller
 
         // Filter based on time of day
 
-
-
         if ($request->has('filter_id'))
             switch ($request->filter_id) {
                 case $morning->id:

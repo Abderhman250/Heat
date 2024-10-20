@@ -15,9 +15,11 @@ use App\Models\Coache;
 use App\Models\Transaction;
 use App\Models\UserPlan;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Laratrust\Traits\LaratrustUserTrait;
 
 class User extends Authenticatable
 {
+    use LaratrustUserTrait; // Add this trait
     use HasApiTokens, Notifiable, HasFactory;
     use SoftDeletes;
 

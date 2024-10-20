@@ -12,6 +12,7 @@ use Illuminate\Database\Seeder;
 use Database\Seeders\LevelSeeder;
 use Database\Seeders\LookupSeeder;
 use Database\Seeders\PlansTableSeeder;
+use Database\Seeders\RoleSeeder;
 use Database\Seeders\SeatPointsTableSeeder;
 use Database\Seeders\UserPlansTableSeeder;
 use Database\Seeders\UsersAndCoachesSeeder;

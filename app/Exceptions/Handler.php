@@ -61,28 +61,31 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
-        if ($exception instanceof AuthenticationException)
-            return ApiResponse::error('Unauthorized', Response::HTTP_UNAUTHORIZED);
-        if ($exception instanceof ThrottleRequestsException)
-            return ApiResponse::error('Too Many Requests', Response::HTTP_UNAUTHORIZED);
-        if ($exception instanceof UnauthorizedHttpException)
-            return ApiResponse::error('Unauthorized', Response::HTTP_UNAUTHORIZED);
-        if ($exception instanceof RouteNotFoundException)
-            return ApiResponse::error('Not Found', Response::HTTP_NOT_FOUND);
-        if ($exception instanceof MethodNotAllowedHttpException)
-            return ApiResponse::error('Method Not Allowed', Response::HTTP_METHOD_NOT_ALLOWED);
-        if ($exception instanceof NotFoundHttpException)
-            return ApiResponse::error('Not Found', Response::HTTP_NOT_FOUND);
-        if ($exception instanceof PostTooLargeException)
-         return response()->json(
+        if ($request->is('api/*')) {
+
+            if ($exception instanceof AuthenticationException)
+                return ApiResponse::error('Unauthorized', Response::HTTP_UNAUTHORIZED);
+            if ($exception instanceof ThrottleRequestsException)
+                return ApiResponse::error('Too Many Requests', Response::HTTP_UNAUTHORIZED);
+            if ($exception instanceof UnauthorizedHttpException)
+                return ApiResponse::error('Unauthorized', Response::HTTP_UNAUTHORIZED);
+            if ($exception instanceof RouteNotFoundException)
+                return ApiResponse::error('Not Found', Response::HTTP_NOT_FOUND);
+            if ($exception instanceof MethodNotAllowedHttpException)
+                return ApiResponse::error('Method Not Allowed', Response::HTTP_METHOD_NOT_ALLOWED);
+            if ($exception instanceof NotFoundHttpException)
+                return ApiResponse::error('Not Found', Response::HTTP_NOT_FOUND);
+            if ($exception instanceof PostTooLargeException)
+                return response()->json(
                     ApiResponse::error('Uploaded file is too large.', Response::HTTP_REQUEST_ENTITY_TOO_LARGE),
                     Response::HTTP_REQUEST_ENTITY_TOO_LARGE
                 );
-       
-        // if ($exception instanceof ModelNotFoundException) {
-        //     $resp = str_replace('App\\Models\\', '', $exception->getModel());
-        //     return respondModelNotFound('Model {$resp} Not found');
-        // }
+
+            // if ($exception instanceof ModelNotFoundException) {
+            //     $resp = str_replace('App\\Models\\', '', $exception->getModel());
+            //     return respondModelNotFound('Model {$resp} Not found');
+            // }
+        }
         return parent::render($request, $exception);
     }
 }
