@@ -4,14 +4,21 @@ namespace App\Http\Controllers\API;
 
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CheckoutRequest;
 use App\Http\Requests\PlanRequest;
 use App\Http\Resources\HistoryPlansResource;
 use App\Http\Resources\PlanResource;
 use App\Http\Resources\PlanShowResource;
+use App\Models\BookingClassUser;
 use App\Models\ClassModel;
 use App\Models\Plan;
+use App\Models\SectionPlan;
+use App\Models\Transaction;
 use App\Models\UserPlan;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class PlanController extends Controller
 {
@@ -23,10 +30,12 @@ class PlanController extends Controller
     public function index(Request $request)
     {
         $perPage = (int) $request->query('per_page', 5);
-        $plans = ClassModel::with('plans')
-        ->has('plans')
-        ->paginate($perPage);
- 
+        $plans = SectionPlan::with('plans')
+            ->has('plans')
+            ->paginate($perPage);
+        // $plans = ClassModel::with('plans')
+        // ->has('plans')
+        // ->paginate($perPage);
         return ApiResponse::success(
             [
                 "collect" => PlanResource::collection($plans),
@@ -55,13 +64,13 @@ class PlanController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(PlanRequest $request ,$id)
+    public function show(PlanRequest $request, $id)
     {
         $perPage = (int) $request->query('per_page', 5);
         $plans = ClassModel::with('plans')
-        ->has('plans')
-        ->paginate($perPage);
- 
+            ->has('plans')
+            ->paginate($perPage);
+
         return ApiResponse::success(
             [
                 "collect" => PlanShowResource::collection($plans),
@@ -73,7 +82,7 @@ class PlanController extends Controller
         );
     }
 
-   
+
     /**
      * transaction the specified resource in storage.
      *
@@ -85,8 +94,8 @@ class PlanController extends Controller
     {
         $perPage = (int) $request->query('per_page', 5);
 
-        $plans = UserPlan::paginate($perPage);
- 
+        $plans = UserPlan::orderBy('created_at','desc')->paginate($perPage);
+
         return ApiResponse::success(
             [
                 "collect" => HistoryPlansResource::collection($plans),
@@ -97,6 +106,58 @@ class PlanController extends Controller
         );
     }
 
+
+
+    public function checkout(CheckoutRequest $request)
+    {
+        // Retrieve validated data from the request
+        $validated = $request->validated();
+        $user_id = auth()->user()->id;
+        DB::beginTransaction();
+
+        try {
+            UserPlan::create([
+                'plan_id' => $validated['plan_id'],
+                'user_id' => $user_id,
+                'start_date' => Carbon::now(),
+                'end_date' => Carbon::now()->addYears(5),
+            ]);
+
+            // Create the transaction
+            Transaction::create([
+                'user_id' => $user_id,
+                'plan_id' => $validated['plan_id'],
+                'transaction_status' => $validated['transaction_status'],
+                'payment_method' => $validated['payment_method'],
+                'amount' => $validated['amount'],
+                'is_successful' => $validated['is_successful'],
+                'transaction_time' => Carbon::parse($validated['transaction_time']), // Ensure the transaction time is in correct format
+            ]);
+
+            if ($validated['is_successful'] === true) {
+
+                $Plan =  Plan::find($validated['plan_id']);
+                $BookingClassUser = BookingClassUser::updateOrCreate(
+                    [
+                        'user_id' => $user_id,    // Search by user_id and class_id
+                        'class_id' => $Plan->class_id,
+                    ],
+                    [
+                        'quantity' => DB::raw('quantity + ' . $Plan->total_classes),  // Increment quantity if record exists, set it if not
+                        'class_completed' => true,  // Mark as completed if relevant
+                    ]
+                );
+            }
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollback();
+
+            Log::error('Failed to checkout: ' . $e->getMessage());
+
+            return response()->json(['error' => 'Checkout failed, please try again later.'], 500);
+        }
+        return ApiResponse::success([], 'Transaction successfully created', 316);
+    }
 
 
     /**

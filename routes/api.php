@@ -136,6 +136,8 @@ Route::middleware(['auth:api'])->group(function () {
 
     Route::get('/user/history-plans', [PlanController::class, 'historyPlans'])->name('plan.histor');
 
+    Route::post('/user/checkout', [PlanController::class, 'checkout'])->name('plan.checkout');
 
+     
 });
  

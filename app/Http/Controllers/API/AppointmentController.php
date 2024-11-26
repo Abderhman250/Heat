@@ -73,6 +73,7 @@ class AppointmentController extends Controller
      */
     public function index(AppointmentRequest $request)
     {
+ 
         $morning =  Lookup::where('key', '=', 'FILTER_MORNING')->first();
         $afternoon =  Lookup::where('key', '=', 'FILTER_AFTERNOON')->first();
         $evening =  Lookup::where('key', '=', 'FILTER_EVENING')->first();
@@ -273,7 +274,7 @@ class AppointmentController extends Controller
         $appointment = Appointment::findOrFail($request->appointment_id);
         if (($appointment->class->seat_selection_required === true))
             $seat_point_id =  $request->seat_point_id;
-
+ 
         DB::beginTransaction();
 
         try {
@@ -282,6 +283,7 @@ class AppointmentController extends Controller
                 'appointment_id' => $request->appointment_id,
                 'seat_id' => $seat_point_id,
                 'user_id' => $user->id,
+                'guest_name'=> $request->guest_name ?? null,
                 'status' => 'confirmed',
             ]);
             $bookingClassUser = BookingClassUser::where([
@@ -303,7 +305,7 @@ class AppointmentController extends Controller
 
             Log::error('Failed to create booking: ' . $e->getMessage());
 
-            return response()->json(['error' => 'Booking failed, please try again later.'], 500);
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 

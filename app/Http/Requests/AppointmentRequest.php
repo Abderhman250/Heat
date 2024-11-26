@@ -91,12 +91,16 @@ class AppointmentRequest extends FormRequest
                     new AppointmentValidation($this->user()),
                     new ValidSeatForAppointment($this->seat_point_id)
                 ],
+
                 "seat_point_id" => [
                     'nullable',
                     'exists:seat_points,id'
                 ],
-            ];
 
+                "guest_name"=>['nullable','string'],
+                
+            ];
+ 
             if ($appointment && $appointment->class->seat_selection_required) {
                 $rules['seat_point_id'] = [
                     'required',

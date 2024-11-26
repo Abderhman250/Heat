@@ -35,6 +35,7 @@ class SeatPointCollection extends ResourceCollection
                     'id' => $point->id,
                     'seat_number' => $point->seat_number,
                     'line' => $point->line,
+                    'seat_not_active'=>$point->seat_not_active,
                     'class_id' => $point->class_id,
                     'note' => $point->note,
                     'is_booking' => $this->is_booking($point->id),
