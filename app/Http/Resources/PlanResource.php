@@ -16,14 +16,18 @@ class PlanResource extends JsonResource
      */
     public function toArray($request)
     {
- 
+        $plans = $this->plans ?? null;
+        $plan = $this->plans->first() ?? null;  
+        $class = $plan->class ?? null;
+        $classType = $class->classType ?? null;
+        
         return [
-           
-            "class_id"=> $this->id,
-            "name_class"=>$this->name,
-            "class_type"=>$this->classType->type_name,
-            "plans"=>$this->plans
- 
+            "class_id" => $class->id ?? null,
+            "name_class" => $class->name ?? null,
+            "class_type" => $classType->type_name ?? null,
+            'section_name' => $this->section_name,
+            'description' => $this->description ?? $this->section_name, // Assuming description should come from the model's 'description' attribute, or fallback to section_name.
+            "plans" => $plans
         ];
     }
 }

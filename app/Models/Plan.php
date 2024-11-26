@@ -9,7 +9,7 @@ class Plan extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['plan_name', 'class_id', 'total_classes', 'description', 'photo'];
+    protected $fillable = ['plan_name', 'class_id', 'total_classes', 'description', 'photo' ,'price'];
 
     public function class()
     {
@@ -19,5 +19,10 @@ class Plan extends Model
     public function userPlans()
     {
         return $this->hasMany(UserPlan::class);
+    }
+
+    public function sectionPlan()
+    {
+        return $this->belongsTo(SectionPlan::class);
     }
 }

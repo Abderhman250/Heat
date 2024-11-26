@@ -12,7 +12,9 @@ use Illuminate\Database\Seeder;
 use Database\Seeders\LevelSeeder;
 use Database\Seeders\LookupSeeder;
 use Database\Seeders\PlansTableSeeder;
+use Database\Seeders\RoleSeeder;
 use Database\Seeders\SeatPointsTableSeeder;
+use Database\Seeders\SectionPlanSeeder;
 use Database\Seeders\UserPlansTableSeeder;
 use Database\Seeders\UsersAndCoachesSeeder;
 
@@ -36,6 +38,7 @@ class DatabaseSeeder extends Seeder
             ClassTypesTableSeeder::class,
             ClassesTableSeeder::class,
             SeatPointsTableSeeder::class,
+            SectionPlanSeeder::class,
             PlansTableSeeder::class,
             AppointmentsTableSeeder::class,
             UserPlansTableSeeder::class,

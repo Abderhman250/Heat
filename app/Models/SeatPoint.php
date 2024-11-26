@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class SeatPoint extends Model
 {
     use HasFactory;
-    protected $fillable = ['seat_number','line','class_id', 'note'];
+    protected $fillable = ['seat_number','seat_not_active','line','class_id', 'note'];
 
     public function class()
     {

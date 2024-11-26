@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\ClassModel;
+use App\Models\SectionPlan;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class PlanFactory extends Factory
@@ -37,6 +38,8 @@ class PlanFactory extends Factory
             'description' => $this->faker->paragraph,
             'price'=> $this->faker->numberBetween(51, 250),
             'photo' => $this->faker->imageUrl(640, 480, 'sports', true),
+            'section_plan_id' => SectionPlan::inRandomOrder()->first()->id,  // Link to a random section plan
+
         ];
     }
 }
