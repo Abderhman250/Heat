@@ -5,80 +5,106 @@
 <link rel="stylesheet" href="{{ asset('admin/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
 <link rel="stylesheet" href="{{ asset('admin/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
 <link rel="stylesheet" href="{{ asset('admin/plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
+<style>
+    /* Button styling */
+    .btn-create {
+        font-size: 16px;
+        font-weight: bold;
+        padding: 10px 20px;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .btn-create i {
+        margin-right: 8px;
+    }
+    .btn-create:hover {
+        background-color: #004085;
+        color: #fff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Align button to max right */
+    .header-actions {
+        margin-left: auto; /* Pushes the button to the far right */
+    }
+</style>
 @endsection
 
 @section('content')
 <div class="wrapper">
-   @include('admin.layouts.nav')
-   @include('admin.layouts.sidebar')
+    @include('admin.layouts.nav')
+    @include('admin.layouts.sidebar')
 
-   <div class="content-wrapper">
-      <div class="content-header">
-         <div class="container-fluid">
-            <div class="row mb-2">
-               <div class="col-sm-6">
-                  <h1 class="m-0">Coach</h1>
-               </div>
-               <div class="col-sm-6">
-                  <ol class="breadcrumb float-sm-right">
-                     <li class="breadcrumb-item"><a href="#">Home</a></li>
-                     <li class="breadcrumb-item active">Coach</li>
-                  </ol>
-               </div>
+    <div class="content-wrapper">
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0">Manage Coaches</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+                            <li class="breadcrumb-item active">Coaches</li>
+                        </ol>
+                    </div>
+                </div>
             </div>
-         </div>
-      </div>
-      <div class="content">
-         <div class="container-fluid">
-            <div class="row">
-               <div class="card">
-                  <div class="card-header">
-                     <h3 class="card-title">Coach List</h3>
-                  </div>
-                  <div class="card-body">
-                     <table id="userTable" class="table table-bordered table-striped">
-                        <thead>
-                           <tr>
-                              <th>ID</th>
-                              <th>Username</th>
-                              <th>First Name</th>
-                              <th>Last Name</th>
-                              <th>Phone</th>
-                              <th>Gender</th>
-                              <th>Email</th>
-                              <th>Date of Birth</th>
-                              <!-- <th>Photo</th> -->
-                              <th>Is Active</th>
-                              <th>Action</th>
-                           </tr>
-                        </thead>
-                        <tbody>
+        </div>
 
-                        </tbody>
-                        <tfoot>
-                           <tr>
-                              <th>ID</th>
-                              <th>Username</th>
-                              <th>First Name</th>
-                              <th>Last Name</th>
-                              <th>Phone</th>
-                              <th>Gender</th>
-                              <th>Email</th>
-                              <th>Date of Birth</th>
-                              <!-- <th>Photo</th> -->
-
-                              <th>Is Active</th>
-                              <th>Action</th>
-                           </tr>
-                        </tfoot>
-                     </table>
-
-                  </div>
-               </div>
+        <!-- Main Content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="card">
+                    <div class="card-header d-flex align-items-center">
+                        <h3 class="card-title">Coaches List</h3>
+                        <div class="header-actions">
+                            <a href="{{ route('admin.coach.create') }}" class="btn btn-primary btn-create">
+                                <i class="fas fa-user-plus"></i> Create Coach
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <table id="userTable" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Username</th>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>Phone</th>
+                                    <th>Gender</th>
+                                    <th>Email</th>
+                                    <th>Date of Birth</th>
+                                    <th>Is Active</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Username</th>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>Phone</th>
+                                    <th>Gender</th>
+                                    <th>Email</th>
+                                    <th>Date of Birth</th>
+                                    <th>Is Active</th>
+                                    <th>Action</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
             </div>
-         </div>
-      </div>
-   </div>
+        </section>
+    </div>
 </div>
 @endsection
 
@@ -96,69 +122,32 @@
 <script src="{{ asset('admin/plugins/datatables-buttons/js/buttons.print.min.js') }}"></script>
 <script src="{{ asset('admin/plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
 <script>
-   $(function() {
-      var userTable = $('#userTable').DataTable({
-         "processing": true,
-         "serverSide": true,
-         "ajax": "{{ route('admin.coach.index') }}", // Adjust the route if necessary
-         columns: [{
-               data: 'id',
-               name: 'id'
-            },
-            {
-               data: 'username',
-               name: 'username'
-            },
-            {
-               data: 'first_name',
-               name: 'first_name'
-            },
-            {
-               data: 'last_name',
-               name: 'last_name'
-            },
-            {
-               data: 'phone',
-               name: 'phone'
-            },
-            {
-               data: 'gender',
-               name: 'gender'
-            },
-            {
-               data: 'email',
-               name: 'email'
-            },
-            {
-               data: 'dob',
-               name: 'dob'
-            },
-            // {
-            //    data: 'photo',
-            //    name: 'photo',
-            //    orderable: false,
-            //    searchable: false
-            // },
-            {
-               data: 'is_active',
-               name: 'is_active'
-            },
-            {
-               data: 'action',
-               name: 'action',
-               orderable: false,
-               searchable: false
-            }
-         ],
-         "paging": true,
-         "lengthChange": true,
-         "searching": true,
-         "ordering": true,
-         "info": true,
-         "autoWidth": false,
-         "responsive": true,
-         "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-      }).buttons().container().appendTo('#userTable_wrapper .col-md-6:eq(0)');
-   });
+    $(function() {
+        var userTable = $('#userTable').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "ajax": "{{ route('admin.coach.index') }}",
+            columns: [
+                { data: 'id', name: 'id' },
+                { data: 'username', name: 'username' },
+                { data: 'first_name', name: 'first_name' },
+                { data: 'last_name', name: 'last_name' },
+                { data: 'phone', name: 'phone' },
+                { data: 'gender', name: 'gender' },
+                { data: 'email', name: 'email' },
+                { data: 'dob', name: 'dob' },
+                { data: 'is_active', name: 'is_active' },
+                { data: 'action', name: 'action', orderable: false, searchable: false }
+            ],
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true,
+            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+        }).buttons().container().appendTo('#userTable_wrapper .col-md-6:eq(0)');
+    });
 </script>
 @endsection

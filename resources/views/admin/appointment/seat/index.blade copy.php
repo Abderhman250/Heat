@@ -1,5 +1,4 @@
 @extends('admin.layouts.app')
-
 @section('links')
     <link rel="stylesheet" href="{{ asset('admin/plugins/fontawesome-free/css/all.min.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
@@ -116,7 +115,17 @@
             color: #333;
         }
 
- 
+        .form-control {
+            border-radius: 10px;
+            padding: 12px 15px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #00bcd4;
+        }
 
         /* Button Styling */
         .btn-primary {
@@ -163,7 +172,14 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-12">
-      
+                            <form method="GET" action="{{ route('searchSeats') }}">
+                                <div class="form-group">
+                                    <label for="class_id">Search by Class</label>
+                                    <input type="text" class="form-control" id="class_id" name="class_id" placeholder="Enter Class ID" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Search</button>
+                            </form>
+
                             <div class="seat-selection-container">
                                 <h1>Seat Points for Class ID: {{ request('class_id') }}</h1>
                                 <div class="seat-grid">
