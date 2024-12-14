@@ -8,15 +8,19 @@ use Illuminate\Database\Eloquent\Model;
 class SeatPoint extends Model
 {
     use HasFactory;
-    protected $fillable = ['seat_number','seat_not_active','line','class_id', 'note'];
+    protected $fillable = ['seat_number', 'seat_not_active', 'line', 'class_id', 'note'];
 
     public function class()
     {
-        return $this->belongsTo(ClassModel::class, 'class_id');
+        return $this->belongsTo(ClassModel::class, 'class_id', 'id');
     }
-
     public function bookings()
     {
         return $this->hasMany(Booking::class);
+    }
+ 
+    public function scopeSearchByClass($query, $classId)
+    {
+        return $query->where('class_id', $classId);
     }
 }

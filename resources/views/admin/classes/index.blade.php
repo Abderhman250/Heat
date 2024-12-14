@@ -5,6 +5,27 @@
 <link rel="stylesheet" href="{{ asset('admin/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
 <link rel="stylesheet" href="{{ asset('admin/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
 <link rel="stylesheet" href="{{ asset('admin/plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
+<style>
+    /* Button Styling */
+    .btn-primary {
+        padding: 10px 20px;
+        font-size: 16px;
+        font-weight: bold;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: #004085;
+        color: #fff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Align the button to the right */
+    .card-header .btn-create {
+        float: right;
+    }
+</style>
 @endsection
 
 @section('content')
@@ -17,7 +38,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Users</h1>
+                        <h1 class="m-0">Classes</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
@@ -28,48 +49,52 @@
                 </div>
             </div>
         </div>
+
         <div class="content">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">Class List</h3>
-                        </div>
-                        <div class="card-body">
-                            <table id="userTable" class="table table-bordered table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Name</th>
-                                        <th>Description</th>
-                                        <!-- <th>Photo</th> -->
-                                        <th>Room</th>
-                                        <th>Seat Selection Required</th>
-                                        <th>Capacity</th>
-                                        <th>Created At</th>
-                                        <th>Class Type ID</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Class List</h3>
+                                <a href="{{ route('admin.classes.create') }}" class="btn btn-primary btn-create">
+                                    <i class="fas fa-plus-circle"></i> Create Class
+                                </a>
+                            </div>
 
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Name</th>
-                                        <th>Description</th>
-                                        <!-- <th>Photo</th> -->
-                                        <th>Room</th>
-                                        <th>Seat Selection Required</th>
-                                        <th>Capacity</th>
-                                        <th>Created At</th>
-                                        <th>Class Type ID</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </tfoot>
-                            </table>
-
+                            <div class="card-body">
+                                <table id="userTable" class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Name</th>
+                                            <th>Description</th>
+                                            <th>Room</th>
+                                            <th>Seat Selection Required</th>
+                                            <th>Capacity</th>
+                                            <th>Created At</th>
+                                            <th>Class Type ID</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Data will be populated by DataTables -->
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Name</th>
+                                            <th>Description</th>
+                                            <th>Room</th>
+                                            <th>Seat Selection Required</th>
+                                            <th>Capacity</th>
+                                            <th>Created At</th>
+                                            <th>Class Type ID</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -95,9 +120,9 @@
 <script>
     $(function() {
         var userTable = $('#userTable').DataTable({
-            "processing": true,
-            "serverSide": true,
-            "ajax": "{{ route('admin.classes.index') }}", // Adjust the route if necessary
+            processing: true,
+            serverSide: true,
+            ajax: "{{ route('admin.classes.index') }}", // Adjust the route if necessary
             columns: [{
                     data: 'id',
                     name: 'id'
@@ -110,12 +135,6 @@
                     data: 'description',
                     name: 'description'
                 },
-                // {
-                //     data: 'photo',
-                //     name: 'photo',
-                //     orderable: false,
-                //     searchable: false
-                // },
                 {
                     data: 'room',
                     name: 'room'
@@ -143,21 +162,14 @@
                     searchable: false
                 }
             ],
-            // columnDefs: [{
-            //     targets: 3, // Assuming 'photo' is the fourth column (0 index)
-            //     render: function(data, type, row) {
-            //         console.log(data); // Check what is being passed to the render function
-            //         return data; // Return the data directly to allow HTML rendering
-            //     }
-            // }],
-            "paging": true,
-            "lengthChange": true,
-            "searching": true,
-            "ordering": true,
-            "info": true,
-            "autoWidth": false,
-            "responsive": true,
-            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+            paging: true,
+            lengthChange: true,
+            searching: true,
+            ordering: true,
+            info: true,
+            autoWidth: false,
+            responsive: true,
+            buttons: ["copy", "csv", "excel", "pdf", "print", "colvis"]
         }).buttons().container().appendTo('#userTable_wrapper .col-md-6:eq(0)');
     });
 </script>
