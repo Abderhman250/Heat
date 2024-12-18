@@ -48,8 +48,8 @@
                               <th>Email</th>
                               <th>Date of Birth</th>
                               <th>Photo</th>
-                              <th>Is Active</th>
-                              <th>Action</th>
+                             
+ 
                            </tr>
                         </thead>
                         <tbody>
@@ -66,9 +66,8 @@
                               <th>Email</th>
                               <th>Date of Birth</th>
                               <th>Photo</th>
-
-                              <th>Is Active</th>
-                              <th>Action</th>
+ 
+ 
                            </tr>
                         </tfoot>
                      </table>
@@ -139,16 +138,8 @@
                orderable: false,
                searchable: false
             },
-            {
-               data: 'is_active',
-               name: 'is_active'
-            },
-            {
-               data: 'action',
-               name: 'action',
-               orderable: false,
-               searchable: false
-            }
+   
+            
          ],
          "paging": true,
          "lengthChange": true,

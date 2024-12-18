@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\StoreAppointmentRequest;
+use App\Http\Requests\Admin\UpdateAppointmentRequest;
 use App\Models\Appointment;
 use App\Models\Booking;
 use App\Models\ClassModel;
@@ -21,14 +23,12 @@ class AppointmentContrtoller extends Controller
             return DataTables::of($appointments)
                 ->addColumn('class', function ($appointment) {
                     return  '<b class="text-warning">' . $appointment->class->name . '</b>';
-             //                    return  '<b href="' . route('admin.classes.index') . '">' . $appointment->class->name . '</b>';
+                    //                    return  '<b href="' . route('admin.classes.index') . '">' . $appointment->class->name . '</b>';
 
                 })
                 ->addColumn('coach', function ($appointment) {
                     $coach =  $appointment->coach;
-                    return($coach !== null)?  $coach->user->first_name . ' ' . $coach->user->last_name : null;// Properly formatted anchor tag
- 
-                    //return '<a href="' . route('admin.coach.index') . '">' . $coach->user->first_name . ' ' . $coach->user->last_name . '</a>'; // Properly formatted anchor tag
+                    return ($coach !== null) ?  $coach->user->first_name . ' ' . $coach->user->last_name : null; // Properly formatted anchor tag
 
                 })
 
@@ -42,15 +42,13 @@ class AppointmentContrtoller extends Controller
                     }
                     return null;
                 })
-
-                ->addColumn('action', function ($class) {
-                    return '
-                                <form action="' . 1 . '" method="POST" style="display:inline;">
-                                ' . csrf_field() . '
-                                ' . method_field('DELETE') . '
-                                <button type="submit" class="btn btn-warning btn-md"> Action</button>
-                            </form>';
+                ->addColumn('action', function ($appointment) {
+                    return '<a href="' . route('admin.appointments.edit', $appointment->id) . '" 
+                                class="btn btn-sm btn-block btn-outline-info btn-xs">
+                                <i class="fas fa-edit mr-1"></i> Edit
+                            </a>';
                 })
+           
                 ->rawColumns(['coach', 'seat_selection', 'class', 'action'])
                 ->make(true);
         }
@@ -66,19 +64,19 @@ class AppointmentContrtoller extends Controller
 
             return DataTables::of($Booking)
                 ->addColumn('username', function ($Booking) {
-                    return  '<a href="' . route('admin.coach.index') . '">' . $Booking->user->username . '</a>';
+                    return   $Booking->user->username;
                 })
                 ->addColumn('appointment', function ($Booking) {
                     $appointment =  $Booking->appointment;
                     if ($appointment !== null)
-                        return '<a href="' . route('admin.coach.index') . '">' . $appointment->appointment_name . ' ' . $appointment->appointment_name . '</a>'; // Properly formatted anchor tag
+                        return    $appointment->appointment_name; // Properly formatted anchor tag
                     else
                         return null;
                 })
                 ->addColumn('seat', function ($Booking) {
                     $seat =  $Booking->seat;
                     if ($seat !== null)
-                        return '<a href="' . route('admin.coach.index') . '">' . $seat->seat_number . ' ' . $seat->seat_number . '</a>'; // Properly formatted anchor tag
+                        return   $seat->seat_number; // Properly formatted anchor tag
                     else
                         return null;
                 })
@@ -140,15 +138,13 @@ class AppointmentContrtoller extends Controller
         $appointmentId = $request->input('appointment_id');
         $appointment = Appointment::find($appointmentId);
 
-        // Fetch all booked seat ids for the given appointment_id
+         
         $bookedSeats = Booking::where('appointment_id', $appointmentId)
             ->pluck('seat_id')
-            ->toArray();  // Efficiently return an array of booked seat IDs
+            ->toArray();   
 
-        // Fetch all seats related to the class in a single query
-        $seats = SeatPoint::where('class_id', $appointment->class_id)->get();
-
-        // Return optimized view with necessary data
+         $seats = SeatPoint::where('class_id', $appointment->class_id)->get();
+ 
         return view('admin.appointment.seat.index', [
             'seatPoints' => $seats,
             'bookedSeats' => $bookedSeats,
@@ -156,18 +152,7 @@ class AppointmentContrtoller extends Controller
         ]);
     }
 
-    // public function searchSeatsByClass(Request $request)
-    // {
-    //     // Validate input
-    //     $request->validate([
-    //         'appointment_id' => 'required|integer|exists:appointments,id',
-    //     ]);
-
-    //     // Search using the scope
-    //     $seatPoints = SeatPoint::searchByClass($request->input('class_id'))->get();
-
-    //     return view('admin.appointment.seat.index', compact('seatPoints'));
-    // }
+ 
 
 
 
@@ -181,11 +166,11 @@ class AppointmentContrtoller extends Controller
 
             return DataTables::of($SeatPoint)
                 ->addColumn('class', function ($seat) {
-                    return  '<a href="' . route('admin.coach.index') . '">' . $seat->class->name . '</a>';
+                    return   $seat->class->name ;
                 })
 
                 ->addColumn('room', function ($seat) {
-                    return  '<a href="' . route('admin.coach.index') . '">' . $seat->class->room . '</a>';
+                    return   $seat->class->room  ;
                 })
                 ->rawColumns(['id', 'class', "room", 'seat_number', 'line', 'note']) // Specify columns  
                 ->make(true);
@@ -196,24 +181,23 @@ class AppointmentContrtoller extends Controller
 
     public function searchSeatsByClass(Request $request)
     {
-        // Validate input
+         
         $request->validate([
             'class_id' => 'required|integer|exists:appointments,id',
         ]);
-
-        // Fetch the appointment details
+ 
         $appointmentId = $request->input('class_id');
         $appointment = Appointment::find($appointmentId);
 
-        // Fetch all booked seat ids for the given appointment_id
+ 
         $bookedSeats = Booking::where('appointment_id', $appointmentId)
             ->pluck('seat_id')
-            ->toArray();  // Efficiently return an array of booked seat IDs
+            ->toArray();   
 
-        // Fetch all seats related to the class in a single query
+ 
         $seats = SeatPoint::where('class_id', $appointment->class_id)->get();
 
-        // Return optimized view with necessary data
+       
         return view('admin.appointment.seat.index', [
             'seatPoints' => $seats,
             'bookedSeats' => $bookedSeats,
@@ -227,32 +211,43 @@ class AppointmentContrtoller extends Controller
     {
         try {
             $classes = ClassModel::select('id', 'name')->get();
-            $coaches = Coache::select('id', 'username')->get();
+            $coaches = Coache::with('user')->get();
+
             return view('admin.appointment.create', compact('classes', 'coaches'));
         } catch (\Exception $e) {
             return redirect()->back()->withErrors(['errors' => $e->getMessage()]);
         }
     }
 
-    public function store(Request $request)
+    public function store(StoreAppointmentRequest $request)
     {
         try {
-            $validated = $request->validate([
-                'appointment_name' => 'required|string|max:255',
-                'class_id'         => 'required|exists:classes,id',
-                'coach_id'         => 'required|exists:coaches,id',
-                'min_participants' => 'required|integer|min:1',
-                'max_participants' => 'required|integer|gte:min_participants',
-                'start_time'       => 'required|date|after:now',
-                'end_time'         => 'required|date|after:start_time',
-                'location'         => 'required|string|max:255',
-            ]);
+            $validated = $request->validated(); // Use validated data
 
             Appointment::create($validated);
 
             return redirect()->route('admin.appointments.index');
         } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['errors' => $e->getMessage()])->withInput();
+        }
+    }
 
+
+    public function edit(Appointment $appointment)
+    {
+        $classes = ClassModel::select('id', 'name')->get();
+        $coaches = Coache::with('user')->get();
+        return view('admin.appointment.edit', compact('appointment', 'classes', 'coaches'));
+    }
+
+    public function update(UpdateAppointmentRequest $request, Appointment $appointment)
+    {
+        try {
+            $validated = $request->validated(); // Use validated data
+            $appointment->update($validated);
+
+            return redirect()->route('admin.appointments.index')->with('success', 'Appointment updated successfully.');
+        } catch (\Exception $e) {
             return redirect()->back()->withErrors(['errors' => $e->getMessage()])->withInput();
         }
     }

@@ -40,6 +40,7 @@
                         <thead>
                            <tr>
                               <th>ID</th>
+                              <th>Photo</th>
                               <th>Username</th>
                               <th>First Name</th>
                               <th>Last Name</th>
@@ -47,8 +48,8 @@
                               <th>Gender</th>
                               <th>Email</th>
                               <th>Date of Birth</th>
-                              <th>Photo</th>
-                 
+         
+
                               <th>Action</th>
                            </tr>
                         </thead>
@@ -58,6 +59,7 @@
                         <tfoot>
                            <tr>
                               <th>ID</th>
+                              <th>Photo</th>
                               <th>Username</th>
                               <th>First Name</th>
                               <th>Last Name</th>
@@ -65,9 +67,9 @@
                               <th>Gender</th>
                               <th>Email</th>
                               <th>Date of Birth</th>
-                              <th>Photo</th>
+  
 
-           
+
                               <th>Action</th>
                            </tr>
                         </tfoot>
@@ -106,6 +108,10 @@
                name: 'id'
             },
             {
+               data: 'photo',
+               name: 'photo'
+            },
+            {
                data: 'username',
                name: 'username'
             },
@@ -133,16 +139,11 @@
                data: 'dob',
                name: 'dob'
             },
+ 
+
             {
-               data: 'photo',
-               name: 'photo',
-               orderable: false,
-               searchable: false
-            },
-       
-            {
-               data: 'action',
-               name: 'action',
+               data: 'active',
+               name: 'active',
                orderable: false,
                searchable: false
             }
@@ -157,5 +158,54 @@
          "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
       }).buttons().container().appendTo('#userTable_wrapper .col-md-6:eq(0)');
    });
+
+$(document).on('click', '.activate-user, .deactivate-user', function() {
+    let userId = $(this).data('id');
+    let button = $(this); // Reference to the clicked button
+    let action = button.hasClass('activate-user') ? 'activate' : 'deactivate';
+
+    // Change button text and style immediately
+    if (action === 'activate') {
+        button.text('Activating...').attr('disabled', true).removeClass('btn-success').addClass('btn-secondary');
+    } else {
+        button.text('Deactivating...').attr('disabled', true).removeClass('btn-danger').addClass('btn-secondary');
+    }
+
+    $.ajax({
+        url: `/admin/users/${action}`, // Replace with your route URL
+        type: 'POST',
+        data: {
+            id: userId,
+            _token: '{{ csrf_token() }}' // CSRF token for security
+        },
+        success: function(response) {
+         Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: response.message,
+                timer: 2000, // Auto-close in 2 seconds
+                showConfirmButton: false
+            });
+
+            // Reload the table
+            $('#users-table').DataTable().ajax.reload();
+        },
+        error: function() {
+         Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Something went wrong. Please try again.'
+            });
+
+            // Revert button changes on error
+            if (action === 'activate') {
+                button.text('Activate').attr('disabled', false).removeClass('btn-secondary').addClass('btn-success');
+            } else {
+                button.text('Deactivate').attr('disabled', false).removeClass('btn-secondary').addClass('btn-danger');
+            }
+        }
+    });
+});
+
 </script>
 @endsection

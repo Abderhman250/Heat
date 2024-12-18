@@ -8,12 +8,12 @@
   <!-- Sidebar -->
   <div class="sidebar">
     <!-- Sidebar user panel -->
-    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+    <div class="user-panel mt-3 pb-2 mb-3 d-flex">
       <div class="image">
-        <img src="{{asset('admin/dist/img/user2-160x160.jpg')}}" class="img-circle elevation-2" alt="User Image">
+        <img src="{{asset('admin/dist/img/heat2.png')}}" class="img-circle elevation-4" alt="User Image">
       </div>
       <div class="info">
-        <a href=" " class="d-block">Alexander Pierce</a>
+        <a href=" " class="d-block h5">Heat</a>
       </div>
     </div>
 
@@ -38,7 +38,7 @@
             <i class="nav-icon fas fa-tachometer-alt"></i>
             <p>
               Dashboard
-              <span class="badge badge-primary right">Overview</span>
+              <!-- <span class="badge badge-primary right">Overview</span> -->
             </p>
           </a>
         </li>
@@ -49,7 +49,7 @@
           <i class="nav-icon fas fa-chart-line"></i>
           <p>
               Level
-              <span class="badge badge-info right">Core</span>
+              <!-- <span class="badge badge-info right">Core</span> -->
             </p>
           </a>
         </li>
@@ -59,7 +59,7 @@
             <i class="nav-icon fas fa-chalkboard"></i>
             <p>
               Classes Management
-              <span class="badge badge-info right">Core</span>
+              <!-- <span class="badge badge-info right">Core</span> -->
             </p>
           </a>
         </li>
@@ -71,7 +71,7 @@
             <p>
               User Management
               <i class="fas fa-angle-left right"></i>
-              <span class="badge badge-secondary right">Admin</span>
+              <!-- <span class="badge badge-secondary right">Admin</span> -->
             </p>
           </a>
           <ul class="nav nav-treeview">
@@ -80,7 +80,7 @@
                 <i class="nav-icon fas fa-users"></i>
                 <p>
                   All Users
-                  <span class="badge badge-light right">View</span>
+                  <!-- <span class="badge badge-light right">View</span> -->
                 </p>
               </a>
             </li>
@@ -89,7 +89,7 @@
                 <i class="nav-icon fas fa-user-tie"></i>
                 <p>
                   Coaches Directory
-                  <span class="badge badge-light right">View</span>
+                  <!-- <span class="badge badge-light right">View</span> -->
 
                 </p>
               </a>
@@ -99,7 +99,7 @@
                 <i class="nav-icon fas fa-user-shield"></i>
                 <p>
                   Admin Profiles
-                  <span class="badge badge-info right">Secure</span>
+                  <!-- <span class="badge badge-info right">Secure</span> -->
                 </p>
               </a>
             </li>
@@ -121,7 +121,7 @@
             <p>
               Appointment System
               <i class="fas fa-angle-left right"></i>
-              <span class="badge badge-info right">Schedule</span>
+              <!-- <span class="badge badge-info right">Schedule</span> -->
             </p>
           </a>
           <ul class="nav nav-treeview">
@@ -130,7 +130,7 @@
                 <i class="far fa-calendar-check nav-icon"></i>
                 <p>
                   Appointment
-                  <span class="badge badge-light right">List</span>
+                  <!-- <span class="badge badge-light right">List</span> -->
                 </p>
               </a>
             </li>
@@ -139,7 +139,7 @@
                 <i class="nav-icon fas fa-book"></i>
                 <p>
                   Bookings
-                  <span class="badge badge-light right">List</span>
+                  <!-- <span class="badge badge-light right">List</span> -->
                 </p>
               </a>
             </li>
@@ -148,7 +148,7 @@
                 <i class="nav-icon fas fa-chair"></i>
                 <p>
                   Class Seat Allocation
-                  <span class="badge badge-light right">List</span>
+                  <!-- <span class="badge badge-light right">List</span> -->
                 </p>
               </a>
             </li>
@@ -159,8 +159,8 @@
           <a href="{{ route('admin.section_plans.index') }}" class="nav-link {{ request()->routeIs('admin.section_plans.index') ? 'active' : '' }}">
             <i class="nav-icon fas fa-th-large"></i>
             <p>
-              Section Plans
-              <span class="badge badge-info right">Sections</span>
+              Plan Header
+              <!-- <span class="badge badge-info right">Sections</span> -->
             </p>
           </a>
         </li>
@@ -190,7 +190,7 @@
             <i class="nav-icon fas fa-exchange-alt"></i>
             <p>
               Transaction History
-              <span class="badge badge-secondary right">Records</span>
+              <!-- <span class="badge badge-secondary right">Records</span> -->
             </p>
           </a>
         </li>

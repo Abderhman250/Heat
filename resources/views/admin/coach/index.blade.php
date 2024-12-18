@@ -72,6 +72,7 @@
                             <thead>
                                 <tr>
                                     <th>ID</th>
+                                    <th>Photo</th>
                                     <th>Username</th>
                                     <th>First Name</th>
                                     <th>Last Name</th>
@@ -79,7 +80,7 @@
                                     <th>Gender</th>
                                     <th>Email</th>
                                     <th>Date of Birth</th>
-                                    <th>Is Active</th>
+                        
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -88,6 +89,7 @@
                             <tfoot>
                                 <tr>
                                     <th>ID</th>
+                                    <th>Photo</th>
                                     <th>Username</th>
                                     <th>First Name</th>
                                     <th>Last Name</th>
@@ -95,7 +97,7 @@
                                     <th>Gender</th>
                                     <th>Email</th>
                                     <th>Date of Birth</th>
-                                    <th>Is Active</th>
+        
                                     <th>Action</th>
                                 </tr>
                             </tfoot>
@@ -129,6 +131,7 @@
             "ajax": "{{ route('admin.coach.index') }}",
             columns: [
                 { data: 'id', name: 'id' },
+                { data: 'photo', name: 'photo' },
                 { data: 'username', name: 'username' },
                 { data: 'first_name', name: 'first_name' },
                 { data: 'last_name', name: 'last_name' },
@@ -136,7 +139,7 @@
                 { data: 'gender', name: 'gender' },
                 { data: 'email', name: 'email' },
                 { data: 'dob', name: 'dob' },
-                { data: 'is_active', name: 'is_active' },
+ 
                 { data: 'action', name: 'action', orderable: false, searchable: false }
             ],
             "paging": true,

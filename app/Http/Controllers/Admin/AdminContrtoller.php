@@ -23,15 +23,7 @@ class AdminContrtoller extends Controller
                     return $user->gender == 0 ? 'Male' : 'Female';
                 })
           
-                ->addColumn('action', function ($user) {
-                    return '
-                     
-                            <form action="' . 1 . '" method="POST" style="display:inline;">
-                                ' . csrf_field() . '
-                                ' . method_field('DELETE') . '
-                                <button type="submit" class="btn btn-warning btn-md"> Action</button>
-                            </form>';
-                })
+    
                 ->make(true);
         }
 
