@@ -14,14 +14,14 @@
     }
 
     /* Button Styling */
-    .btn-success {
+    .btn-primary {
         padding: 10px 20px;
         font-size: 16px;
         font-weight: bold;
         border-radius: 5px;
         transition: all 0.3s ease;
     }
-    .btn-success:hover {
+    .btn-primary:hover {
         background-color: #218838;
         color: #fff;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -55,12 +55,12 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Manage Plan Header</h1>
+                        <h1 class="m-0">Manage Levels</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                            <li class="breadcrumb-item active">Plan Header</li>
+                            <li class="breadcrumb-item active">Levels</li>
                         </ol>
                     </div>
                 </div>
@@ -72,7 +72,7 @@
             <div class="container-fluid">
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title">Create Plan Header</h3>
+                        <h3 class="card-title">Update Level</h3>
                     </div>
                     <div class="card-body">
                         <!-- Validation Errors -->
@@ -88,34 +88,46 @@
                         @endif
 
                         <!-- Form Start -->
-                        <form action="{{ route('admin.section_plans.store') }}" method="POST">
+                        <form action="{{ route('admin.level.update', $level->id) }}" method="POST">
                             @csrf
+                            @method('PUT') <!-- Use PUT method for updates -->
                             <div class="row">
-                                <!-- Section Name -->
+                                <!-- Title Levels -->
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="section_name">Section Name</label>
-                                        <input type="text" name="section_name" id="section_name" class="form-control @error('section_name') is-invalid @enderror" placeholder="Enter section name" value="{{ old('section_name') }}" required>
-                                        @error('section_name')
+                                        <label for="title_levels">Title Levels</label>
+                                        <input type="text" name="title_levels" id="title_levels" 
+                                               class="form-control @error('title_levels') is-invalid @enderror" 
+                                               placeholder="Enter level title" 
+                                               value="{{ old('title_levels', $level->title_levels) }}" required>
+                                        @error('title_levels')
                                             <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
                                         @enderror
                                     </div>
                                 </div>
 
-                                <!-- Description -->
-                                <div class="col-md-12">
+                                <!-- Required Classes -->
+                                <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="description">Description</label>
-                                        <textarea name="description" id="description" rows="4" class="form-control @error('description') is-invalid @enderror" placeholder="Enter description">{{ old('description') }}</textarea>
-                                        @error('description')
+                                        <label for="required_classes">Required Classes</label>
+                                        <input type="number" name="required_classes" id="required_classes" 
+                                               class="form-control @error('required_classes') is-invalid @enderror" 
+                                               placeholder="Enter number of required classes" 
+                                               value="{{ old('required_classes', $level->required_classes) }}" required>
+                                        @error('required_classes')
                                             <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
                                         @enderror
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="box-footer text-right">
-                                <button type="submit" class="btn btn-success">Create Plan Header</button>
+                                <!-- Submit Button -->
+                                <div class="col-md-12">
+                                    <div class="text-right">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-save"></i> Update Level
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -127,11 +139,13 @@
 @endsection
 
 @section('scripts')
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 <script>
     $(document).ready(function() {
-        // Additional Select2 initialization if needed
+        $('#required_classes').select2({
+            placeholder: "Enter number of required classes",
+            allowClear: true
+        });
     });
 </script>
 @endsection

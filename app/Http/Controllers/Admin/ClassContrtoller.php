@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\UpdateClassRequest;
 use App\Models\ClassModel;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\ClassType;
+use App\Models\SeatPoint;
 use Carbon\Carbon;
 class ClassContrtoller extends Controller
 {
@@ -24,15 +26,15 @@ class ClassContrtoller extends Controller
                 alt="image">'  :null;
             })             
 
-                ->addColumn('action', function ($class) {
-                    return '
-                                <form action="' . 1 . '" method="POST" style="display:inline;">
-                                ' . csrf_field() . '
-                                ' . method_field('DELETE') . '
-                                <button type="submit" class="btn btn-warning btn-md"> Action</button>
-                            </form>';
-                })
-                ->make(true);
+            ->addColumn('edit', function ($Level) {
+                return '<a href="' . route('admin.classes.edit', $Level->id) . '" 
+                            class="btn btn-sm btn-block btn-outline-info btn-xs">
+                            <i class="fas fa-edit mr-1"></i> Edit
+                        </a>';
+            })
+            ->rawColumns(['edit'])
+
+            ->make(true);
         }
 
         return view('admin.classes.index');
@@ -59,7 +61,7 @@ class ClassContrtoller extends Controller
         return view('admin.classes.create');
     }
 
-    public function store(Request $request)
+    public function     store(Request $request)
     {
         try{
                 $validated = $request->validate([
@@ -72,7 +74,7 @@ class ClassContrtoller extends Controller
                     'description'             => 'nullable|string',
                     'photo'                   => 'nullable|image|max:2048',
                 ]);
-
+ 
                 if($request->file('photo'))
                     $photo = $request->getSchemeAndHttpHost().'/storage/'.$request->file('photo')->store('classes', 'public');
 
@@ -83,7 +85,7 @@ class ClassContrtoller extends Controller
                     'updated_at'      => Carbon::now(),
                 ]);
 
-                ClassModel::create([
+              $ClassModel=   ClassModel::create([
                     'name'                         => $validated['name'],
                     'room'                         => $validated['room'],
                     'capacity'                     => $validated['capacity'],
@@ -92,9 +94,63 @@ class ClassContrtoller extends Controller
                     'class_type_id'                => $class_type_id,
                     'photo'                        => $photo ?? NULL,
                 ]);
+
+
+                if($request->seat_selection_required == "1"){
+                $seat = ["F-3", "F-4","F-5","F-6","T-6","T-5","T-4","T-3","T-2","T-1","F-1","F-2"];
+                    foreach ($seat as $key => $value) {
+                        SeatPoint::create([
+                           'seat_number' =>'E.' . random_int(100,999) ,
+                           'line'=>$value,
+                           'seat_not_active' =>1, 
+                           'note' => "The seat already exists.",
+                           'class_id'=>$ClassModel->id
+                        ]);
+        
+                    }
+                }
             return redirect()->route('admin.classes.index');
         } catch (\Exception $e){
             return redirect()->back()->withErrors(['errors' => $e->getMessage()])->withInput();
+        }
+    }
+
+    public function edit($id)
+    {
+        $class = ClassModel::findOrFail($id); // Fetch the level by ID
+        return view('admin.classes.edit', compact('class'));
+    }
+
+
+    public function update(UpdateClassRequest $request, $id)
+    {
+        try {
+            // Find the class to update
+            $class = ClassModel::findOrFail($id);
+
+            // Validate and get the data from the request
+            $validated = $request->validated();
+
+            // Handle photo upload if it exists
+            if ($request->hasFile('photo')) {
+                $photo = $request->getSchemeAndHttpHost().'/storage/'.$request->file('photo')->store('classes', 'public');
+            } else {
+                $photo = $class->photo; // Retain the existing photo if no new photo is uploaded
+            }
+
+            // Update the class record
+            $class->update([
+                'name'                    => $validated['name'],
+                'room'                    => $validated['room'],
+                'capacity'                => $validated['capacity'],
+                'description'             => $validated['description'],
+                'photo'                   => $photo,
+                'updated_at'              => Carbon::now(),
+            ]);
+
+            return redirect()->route('admin.classes.index')->with('success', 'Class updated successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => $e->getMessage()])->withInput();
         }
     }
 

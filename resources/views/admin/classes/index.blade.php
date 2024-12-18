@@ -74,7 +74,7 @@
                                             <th>Capacity</th>
                                             <th>Created At</th>
                                             <th>Class Type ID</th>
-                                            <th>Action</th>
+                                            <th>Edit</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -90,7 +90,7 @@
                                             <th>Capacity</th>
                                             <th>Created At</th>
                                             <th>Class Type ID</th>
-                                            <th>Action</th>
+                                            <th>Edit</th>
                                         </tr>
                                     </tfoot>
                                 </table>
@@ -156,8 +156,8 @@
                     name: 'class_type_id'
                 },
                 {
-                    data: 'action',
-                    name: 'action',
+                    data: 'edit',
+                    name: 'edit',
                     orderable: false,
                     searchable: false
                 }

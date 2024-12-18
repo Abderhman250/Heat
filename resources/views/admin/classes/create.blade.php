@@ -9,6 +9,7 @@
     .form-group label {
         font-weight: bold;
     }
+
     .form-control {
         border-radius: 5px;
     }
@@ -21,6 +22,7 @@
         border-radius: 5px;
         transition: all 0.3s ease;
     }
+
     .btn-primary:hover {
         background-color: #004085;
         color: #fff;
@@ -38,6 +40,7 @@
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         border-radius: 8px;
     }
+
     .card-header {
         background-color: #f4f6f9;
         border-bottom: 2px solid #dcdfe3;
@@ -77,14 +80,14 @@
                     <div class="card-body">
                         <!-- Validation Errors -->
                         @if ($errors->any())
-                            <div class="alert alert-danger">
-                                <strong>Whoops!</strong> There were some problems with your input.
-                                <ul>
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
+                        <div class="alert alert-danger">
+                            <strong>Whoops!</strong> There were some problems with your input.
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
                         @endif
 
                         <!-- Form Start -->
@@ -97,7 +100,7 @@
                                         <label for="name">Class Name</label>
                                         <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror" placeholder="Enter class name" value="{{ old('name') }}" required>
                                         @error('name')
-                                            <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
+                                        <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
                                         @enderror
                                     </div>
                                 </div>
@@ -108,7 +111,7 @@
                                         <label for="room">Room</label>
                                         <input type="text" name="room" id="room" class="form-control @error('room') is-invalid @enderror" placeholder="Enter room name or number" value="{{ old('room') }}">
                                         @error('room')
-                                            <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
+                                        <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
                                         @enderror
                                     </div>
                                 </div>
@@ -119,7 +122,7 @@
                                         <label for="capacity">Capacity</label>
                                         <input type="number" name="capacity" id="capacity" class="form-control @error('capacity') is-invalid @enderror" placeholder="Enter capacity" value="{{ old('capacity') }}" min="0" required>
                                         @error('capacity')
-                                            <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
+                                        <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
                                         @enderror
                                     </div>
                                 </div>
@@ -133,7 +136,7 @@
                                             <option value="1" {{ old('seat_selection_required') == '1' ? 'selected' : '' }}>Yes</option>
                                         </select>
                                         @error('seat_selection_required')
-                                            <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
+                                        <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
                                         @enderror
                                     </div>
                                 </div>
@@ -150,7 +153,7 @@
                                             <option value="consequuntur" {{ old('type_name') == 'consequuntur' ? 'selected' : '' }}>consequuntur</option>
                                         </select>
                                         @error('type_name')
-                                            <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
+                                        <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
                                         @enderror
                                     </div>
                                 </div>
@@ -164,7 +167,7 @@
                                             <option value="Online" {{ old('booking_process') == 'Online' ? 'selected' : '' }}>Online</option>
                                         </select>
                                         @error('booking_process')
-                                            <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
+                                        <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
                                         @enderror
                                     </div>
                                 </div>
@@ -175,19 +178,28 @@
                                         <label for="description">Description</label>
                                         <textarea name="description" id="description" class="form-control @error('description') is-invalid @enderror" placeholder="Enter description" rows="4">{{ old('description') }}</textarea>
                                         @error('description')
-                                            <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
+                                        <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
                                         @enderror
                                     </div>
                                 </div>
 
                                 <!-- Photo -->
+
+                                <!-- Photo Upload -->
                                 <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="photo">Photo</label>
-                                        <input type="file" name="photo" id="photo" class="form-control-file @error('photo') is-invalid @enderror">
-                                        @error('photo')
-                                            <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
-                                        @enderror
+                                    <div class="form-group text-center">
+                                        <label for="photo" class="font-weight-bold mb-3" style="font-size: 1.1rem;">Upload Your Photo</label>
+                                        <div class="upload-container p-4 border rounded" style="border: 2px dashed #007bff; background-color: #f8f9fa;">
+                                            <input type="file" name="photo" id="photo" class="form-control-file d-none @error('photo') is-invalid @enderror" onchange="showPreview(event);">
+                                            <label for="photo" class="d-block cursor-pointer">
+                                                <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-2"></i>
+                                                <p class="text-muted">Click to upload or drag and drop your file here</p>
+                                            </label>
+                                            <img id="photo-preview" src="" alt="Photo Preview" class="img-thumbnail mt-3" style="display: none; max-width: 150px; height: auto; border: 2px solid #ddd;">
+                                            @error('photo')
+                                            <span class="invalid-feedback d-block"><strong>{{ $message }}</strong></span>
+                                            @enderror
+                                        </div>
                                     </div>
                                 </div>
                             </div>

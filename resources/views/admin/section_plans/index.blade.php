@@ -54,12 +54,12 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0">Section Plans</h1>
+            <h1 class="m-0">Plan Header</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-              <li class="breadcrumb-item active">Section Plans</li>
+              <li class="breadcrumb-item active">Plan Header</li>
             </ol>
           </div>
         </div>
@@ -72,9 +72,9 @@
           <div class="col-md-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Section Plans List</h3>
+                <h3 class="card-title">Section Plan Header List</h3>
                 <a href="{{ route('admin.section_plans.create') }}" class="btn btn-primary btn-create">
-                  <i class="fas fa-plus-circle"></i> Create Section Plan
+                  <i class="fas fa-plus-circle"></i> Create Plan Header
                 </a>
               </div>
               <div class="card-body">
