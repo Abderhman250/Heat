@@ -19,10 +19,15 @@ class PlanShowResource extends JsonResource
  
         return [
            
-            "class_id"=> $this->id,
-            "name_class"=>$this->name,
-            "class_type"=>$this->classType->type_name,
-            "plans"=>$this->plans
+            "class_id"=> $this->class->id,
+            "name_class"=>$this->class->name,
+            "class_type"=>$this->class->classType->type_name ,
+            "plan"=> [
+                 "id" =>$this->id,
+                 "total_classes"=>$this->total_classes,
+                 "description" =>$this->description,
+                 "photo"=>$this->photo,
+            ]
  
         ];
     }

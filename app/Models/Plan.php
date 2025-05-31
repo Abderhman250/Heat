@@ -9,7 +9,7 @@ class Plan extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['plan_name', 'class_id', 'total_classes', 'description', 'photo' ,'price' , 'section_plan_id' , 'type'];
+    protected $fillable = ['plan_name', 'class_id', 'total_classes', 'description', 'photo' ,'price' , 'active','section_plan_id' , 'type'];
 
     public function class()
     {
@@ -22,6 +22,16 @@ class Plan extends Model
     }
 
     public function sectionPlan()
+    {
+        return $this->belongsTo(SectionPlan::class);
+    }
+    public function sectionPlanOne()
+    {
+        return $this->hasOne(SectionPlan::class,  'id','section_plan_id');
+    }
+
+
+    public function sectionPlanHas()
     {
         return $this->belongsTo(SectionPlan::class);
     }

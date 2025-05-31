@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Throwable;
+use App\Models\DeviceToken;
 
 class LoginController extends Controller
 {
@@ -128,6 +129,12 @@ class LoginController extends Controller
         $loginMethod = $request["login_method"];
         if (Auth::attempt([$loginMethod => $request[$loginMethod], "password" => $request['password']])) {
             $user = Auth::user();
+             
+            DeviceToken::updateOrCreate(['user_id'   => Auth::id()], [
+                    'token' => $request['device_token'],
+                    'device_type' =>'firebase'
+                ]);
+
             return $this->getinfoUser($user);
         }
 

@@ -15,7 +15,7 @@ class HomeController extends Controller
     public function homePageData(Request $request)
     {
         $user = auth()->user(); // Assuming user is authenticated
-
+        
         // 1. Registration Date
         $registrationDate = $user->created_at;
 
@@ -33,18 +33,21 @@ class HomeController extends Controller
             ->where('user_id', $user->id)
             ->orderBy('class_completed', 'DESC');
 
-        $classAttended = $BookingClassUser->count('class_completed');
+        $classAttended = $BookingClassUser->sum('class_completed');
+ 
         $mostVisitedClass = $BookingClassUser->first();
 
         $level =  Level::where('required_classes', '>=', $classAttended)->first();
+        $max_level =  Level::orderBY('id','desc')->first();
 
         return ApiResponse::success(
 
             [
                 'level' => $level->title_levels,
+                'max_level'=>$max_level->required_classes,
                 'registration_date' => $registrationDate,
                 'coach_count' => $coachCount,
-                'class_attended' => isset($classAttended) ? $classAttended  : 0,
+                'class_attended' => isset($classAttended) ? (int)$classAttended  : 0,
                 'most_visited_class' => isset($mostVisitedClass->class->name) ? $mostVisitedClass->class->name : null,
             ],
             'Successfully list hoem page.',

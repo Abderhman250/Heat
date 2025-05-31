@@ -33,17 +33,17 @@ class DatabaseSeeder extends Seeder
         $this->call(LookupSeeder::class);
  
         $this->call(LevelSeeder::class); 
-        $this->call(UsersAndCoachesSeeder::class);
+        // $this->call(UsersAndCoachesSeeder::class);
         $this->call([
             ClassTypesTableSeeder::class,
-            ClassesTableSeeder::class,
-            SeatPointsTableSeeder::class,
-            SectionPlanSeeder::class,
-            PlansTableSeeder::class,
-            AppointmentsTableSeeder::class,
-            UserPlansTableSeeder::class,
-            BookingClassUserSeeder::class,
-            BookingsSeeder::class,
+            // ClassesTableSeeder::class,
+            // SeatPointsTableSeeder::class,
+            // SectionPlanSeeder::class,
+            // PlansTableSeeder::class,
+            // AppointmentsTableSeeder::class,
+            // UserPlansTableSeeder::class,
+            // BookingClassUserSeeder::class,
+            // BookingsSeeder::class,
         ]);
 
     }

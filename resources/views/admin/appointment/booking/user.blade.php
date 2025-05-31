@@ -40,31 +40,53 @@
                             <div class="card-header d-flex align-items-center">
                                 <h3 class="card-title">Bookings List</h3>
                             </div>
-
+                            <div class="card">
+                            <div class="card-header d-flex align-items-center">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="class">Class</label>
+                                        <input type="text" name="class" id="class" class="form-control" placeholder="Class name ">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for=" ">Appointment Date</label>
+                                        <input type="date" name="date" id="date" class="form-control" placeholder="MM/DD/YYYY">
+                                    </div>
+                                </div>
+                            </div>
                             {{-- Table Content --}}
                             <div class="card-body">
-                                <table id="bookingsTable" class="table table-bordered table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Username</th>
-                                            <th>Appointment</th>
-                                            <th>Seat</th>
-                                            <th>Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody></tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Username</th>
-                                            <th>Appointment</th>
-                                            <th>Seat</th>
-                                            <th>Status</th>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
+    <table id="bookingsTable" class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Appointment</th>
+                <th>Class</th>
+                <th>Seat</th>
+                <th>Appointment Date </th>
+                <th>Booking Date </th>
+
+                <!-- <th>Status</th> -->
+            </tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Appointment</th>
+                <th>Class</th>
+                <th>Seat</th>
+                <th>Appointment Date</th>
+                <th>Booking Date </th>
+               
+                <!-- <th>Status</th> -->
+            </tr>
+        </tfoot>
+    </table>
+</div>
                             {{-- End Table Content --}}
                         </div>
                     </div>
@@ -90,25 +112,52 @@
     <script src="{{ asset('admin/plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
 
     <script>
-        $(document).ready(function () {
-            $('#bookingsTable').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: "{{ route('admin.booking.index') }}", // Route for fetching data
-                columns: [
-                    { data: 'id', name: 'id' },
-                    { data: 'username', name: 'username' },
-                    { data: 'appointment', name: 'appointment' },
-                    { data: 'seat', name: 'seat' },
-                    { data: 'status', name: 'status' },
-                ],
-                responsive: true,
-                lengthChange: true,
-                searching: true,
-                ordering: true,
-                autoWidth: false,
-                buttons: ["copy", "csv", "excel", "pdf", "print", "colvis"]
-            }).buttons().container().appendTo('#bookingsTable_wrapper .col-md-6:eq(0)');
-        });
+$(document).ready(function () {
+    // Initialize the date picker if needed
+ 
+    // Initialize DataTable with filters
+    var table = $('#bookingsTable').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: "{{ route('admin.booking.index') }}",  // The URL for fetching data
+            data: function (d) {
+                // Include additional filters in the AJAX request
+                d.class = $('#class').val();  // Get class filter value
+                d.date = $('#date').val();    // Get date filter value
+            }
+        },
+        columns: [
+            { data: 'id', name: 'id' },
+            { data: 'username', name: 'username' },
+            { data: 'appointment', name: 'appointment' },
+            { data: 'class', name: 'class' },
+            { data: 'seat', name: 'seat' },
+            { data: 'start_time', name: 'start_time' },
+            { data: 'created_at', name: 'created_at' },
+            // { data: 'status', name: 'status' }
+            
+        ],
+        responsive: true,
+        lengthChange: true,
+        searching: true,
+        ordering: true,
+        autoWidth: false,
+        buttons: ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#bookingsTable_wrapper .col-md-6:eq(0)');
+
+    // When the filter inputs change, redraw the table to reflect new data
+    $('#class').on('keyup', function () {
+        console.log('test');
+        $('#bookingsTable').DataTable().ajax.reload();
+    });
+    
+    $('#date').on('change', function () {
+        console.log('test');
+        $('#bookingsTable').DataTable().ajax.reload();
+    });
+});
+
+
     </script>
 @endsection

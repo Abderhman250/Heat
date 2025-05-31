@@ -35,6 +35,33 @@
             <div class="card-header">
               <h3 class="card-title">Transaction List</h3>
             </div>
+            <div class="card-header d-flex align-items-center">
+                               
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="plan">Plan</label>
+                                        <input type="text" name="plan" id="plan" class="form-control" placeholder="Plan name">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for=" ">Date</label>
+                                        <input type="date" name="date" id="date" class="form-control" placeholder="MM/DD/YYYY">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="status">Status </label>
+                                         <select name="status" id="status" class="form-control"  >
+                                            <option value="" selected>Status transaction</option>
+                                            <option value="1"  >Complete</option>
+                                            <option value="0">Incomplete</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                      
             <div class="card-body">
               <table id="userTable" class="table table-bordered table-striped">
                 <thead>
@@ -91,7 +118,15 @@
     var userTable = $('#userTable').DataTable({
       "processing": true,
       "serverSide": true,
-      "ajax": "{{ route('admin.transaction.index') }}", // Adjust the route if necessary
+      ajax: {
+            url: "{{ route('admin.transaction.index') }}",   
+            data: function (d) {
+    
+                d.plan = $('#plan').val();   
+                d.date = $('#date').val();  
+                d.status =  $('#status').val();
+            }
+        },
       columns: [{
           data: 'id',
           name: 'id'
@@ -142,7 +177,24 @@
         },
       "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
     }).buttons().container().appendTo('#userTable_wrapper .col-md-6:eq(0)');
+
+    $('#plan').on('keyup', function () {
+        console.log('test212');
+        $('#userTable').DataTable().ajax.reload();
+    });
+    
+    $('#date').on('change', function () {
+        console.log('test');
+        $('#userTable').DataTable().ajax.reload();
+    });
+    $('#status').on('change', function () {
+        console.log('test212');
+        $('#userTable').DataTable().ajax.reload();
+    });
+    
+    
   });
-  
+
+
 </script>
 @endsection

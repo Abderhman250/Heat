@@ -16,6 +16,11 @@ class UsersTableSeed extends Seeder
     {
         DB::transaction(function () {
             // Create roles
+            $officeManagerRole = Role::create([
+                'name' => 'office_manager',
+                'display_name' => 'Office Manager',
+                'description' => 'User is allowed to oversee office operations and manage administrative tasks',
+            ]);
             $adminRole = Role::create([
                 'name' => 'admin',
                 'display_name' => 'User Administrator',
@@ -42,7 +47,7 @@ class UsersTableSeed extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-            $user->syncRoles([$userRole->id]);
+            $user->syncRoles([$adminRole->id]);
 
             // Assign the admin role to the user
               // Use the admin role here

@@ -84,6 +84,7 @@
                       <th>ID</th>
                       <th>Section Name</th>
                       <th>Description</th>
+                      <th>Edit</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -93,6 +94,7 @@
                       <th>ID</th>
                       <th>Section Name</th>
                       <th>Description</th>
+                      <th>Edit</th>
                     </tr>
                   </tfoot>
                 </table>
@@ -128,7 +130,8 @@
       columns: [
         { data: 'id', name: 'id' },
         { data: 'section_name', name: 'section_name' },
-        { data: 'description', name: 'description' }
+        { data: 'description', name: 'description' },
+        {data: 'edit',  name: 'edit' }
       ],
       paging: true,
       lengthChange: true,

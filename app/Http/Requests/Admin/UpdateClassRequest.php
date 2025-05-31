@@ -27,13 +27,14 @@ class UpdateClassRequest extends FormRequest
         return [
             'name'                    => 'required|string|max:255',
             'room'                    => 'nullable|string|max:255',
-            'capacity'                => 'required|integer|min:1',
-            'type_name'               => 'required|string|in:sint,odio,occaecati,consequuntur',
-            'booking_process'         => 'required|string|in:In-Person,Online',
+            // 'capacity'                => 'required|integer|min:1',
             'description'             => 'nullable|string',
             'photo'                   => 'nullable|image|max:2048',
+            'class_type_id'           => 'required|exists:class_types,id',
  
         ];
+
+ 
     }
 
     /**

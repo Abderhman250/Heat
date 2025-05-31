@@ -28,6 +28,8 @@ class AppointmentResource extends JsonResource
                 'name' => $this->class->name,
                 'room' => $this->class->room,
                 'seat_selection_required' => $this->class->seat_selection_required,
+                'photo' => $this->class->photo,
+
             ],
             'coach' => [
                 'id'=>$coach->id,
@@ -75,16 +77,23 @@ class AppointmentResource extends JsonResource
         return [
             "data_time" => $time,
             "time" => $carbonTime->format('h:i:s A'),
-            "ago" => $carbonTime->diffForHumans(),
+            "ago" => $carbonTime->diffInMinutes(),
         ];
     }
 
     private function  timeClass()
     {
 
+        // $startTime = Carbon::parse($this->start_time);
+        // $finishTime = Carbon::parse($this->end_time);
+
+        // return  $finishTime->diffInMinutes();
+
+
         $startTime = Carbon::parse($this->start_time);
         $finishTime = Carbon::parse($this->end_time);
-
-        return  $finishTime->diffForHumans($startTime);
+        
+        // Calculate the difference in minutes
+        return $startTime->diffInMinutes($finishTime);
     }
 }

@@ -82,7 +82,7 @@
                                 </div>
 
                                 <!-- Capacity -->
-                                <div class="col-md-6">
+                                <!-- <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="capacity">Capacity</label>
                                         <input type="number" name="capacity" id="capacity" class="form-control @error('capacity') is-invalid @enderror" placeholder="Enter capacity" value="{{ old('capacity', $class->capacity) }}" min="1" required>
@@ -90,37 +90,25 @@
                                             <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
                                         @enderror
                                     </div>
-                                </div>
-
+                                </div> -->
+                      
                                 <!-- Type Name -->
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="type_name">Type Name</label>
-                                        <select name="type_name" id="type_name" class="form-control select2 @error('type_name') is-invalid @enderror">
-                                            <option value="sint" {{ old('type_name', $class->type_name) == 'sint' ? 'selected' : '' }}>sint</option>
-                                            <option value="odio" {{ old('type_name', $class->type_name) == 'odio' ? 'selected' : '' }}>odio</option>
-                                            <option value="occaecati" {{ old('type_name', $class->type_name) == 'occaecati' ? 'selected' : '' }}>occaecati</option>
-                                            <option value="consequuntur" {{ old('type_name', $class->type_name) == 'consequuntur' ? 'selected' : '' }}>consequuntur</option>
+                                        <label for="type_name">Class Type</label>
+                                        <select name="class_type_id" id="class_type_id" class="form-control select2 @error('class_type_id') is-invalid @enderror">
+                                            <option value="">Select Type</option>
+                                            @foreach($class_type  as $key=>$value)
+                                               <option value="{{$value->id}}" {{ old('class_type_id',$class->class_type_id) == $value->id ? 'selected' : '' }}>{{$value->type_name}}</option>
+                                            @endforeach
                                         </select>
-                                        @error('type_name')
+                                        @error('class_type_id')
                                             <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
                                         @enderror
                                     </div>
                                 </div>
 
                                 <!-- Booking Process -->
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="booking_process">Booking Process</label>
-                                        <select name="booking_process" id="booking_process" class="form-control select2">
-                                            <option value="In-Person" {{ old('booking_process', $class->booking_process) == 'In-Person' ? 'selected' : '' }}>In-Person</option>
-                                            <option value="Online" {{ old('booking_process', $class->booking_process) == 'Online' ? 'selected' : '' }}>Online</option>
-                                        </select>
-                                        @error('booking_process')
-                                            <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
-                                        @enderror
-                                    </div>
-                                </div>
 
                                 <!-- Description -->
                                 <div class="col-md-12">
@@ -143,7 +131,7 @@
                                                 <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-2"></i>
                                                 <p class="text-muted">Click to upload or drag and drop your file here</p>
                                             </label>
-                                            <img id="photo-preview" src="" alt="Photo Preview" class="img-thumbnail mt-3" style="display: none; max-width: 150px; height: auto; border: 2px solid #ddd;">
+                                            <img id="photo-preview" src="{{$class->photo}}" alt="Photo Preview" class="img-thumbnail mt-3" style="display: block; max-width: 150px; height: auto; border: 2px solid #ddd;">
                                             @error('photo')
                                                 <span class="invalid-feedback d-block"><strong>{{ $message }}</strong></span>
                                             @enderror
@@ -187,5 +175,6 @@
             preview.style.display = 'none';
         }
     }
+
 </script>
 @endsection

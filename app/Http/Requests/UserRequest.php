@@ -88,6 +88,7 @@ class UserRequest extends FormRequest
                 'first_name' => ['required', 'regex:/^[a-zA-Zء-ي_ -]+$/u'],
                 'last_name' => ['required', 'regex:/^[a-zA-Zء-ي_ -]+$/u'],
                 'photo' => ['image', 'mimes:jpeg,png,jpg,gif' ],
+                'date_of_birth'=>['nullable', 'date','before_or_equal:today' ],
                 'gender' => ['required',Rule::in($gender)],
             ];
         }

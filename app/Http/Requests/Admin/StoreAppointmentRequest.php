@@ -22,6 +22,10 @@ class StoreAppointmentRequest extends FormRequest
         if (!empty($data['end_time'])) {
             $data['end_time'] = Carbon::createFromFormat('Y-m-d\TH:i', $data['end_time'])->format('Y-m-d H:i:s');
         }
+        
+        $data['min_participants'] =1;
+        $data['max_participants'] =200;
+
         return $data;
     }
 

@@ -11,6 +11,7 @@ use App\Models\ClassModel;
 use App\Models\Coache;
 use App\Models\SeatPoint;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 use Yajra\DataTables\Facades\DataTables;
 
 class AppointmentContrtoller extends Controller
@@ -19,7 +20,7 @@ class AppointmentContrtoller extends Controller
     {
         if ($request->ajax()) {
             $appointments = Appointment::with('class', 'coach')->select('id', 'appointment_name', 'class_id', 'coach_id', 'min_participants', 'max_participants', 'start_time', 'end_time', 'location', 'created_at', 'updated_at');
-
+// dd($appointment);
             return DataTables::of($appointments)
                 ->addColumn('class', function ($appointment) {
                     return  '<b class="text-warning">' . $appointment->class->name . '</b>';
@@ -40,7 +41,15 @@ class AppointmentContrtoller extends Controller
                                     <i class="fas fa-chair"></i> Show Seats
                                 </a>';
                     }
-                    return null;
+                    return "-";
+                })
+                ->addColumn('duration',function($appointment){
+
+                    $start_time = Carbon::parse($appointment->start_time);
+                    $end_time = Carbon::parse($appointment->end_time);
+                    
+                    // Calculate the difference in minutes
+                    return $start_time->diffInMinutes($end_time);
                 })
                 ->addColumn('action', function ($appointment) {
                     return '<a href="' . route('admin.appointments.edit', $appointment->id) . '" 
@@ -49,7 +58,7 @@ class AppointmentContrtoller extends Controller
                             </a>';
                 })
            
-                ->rawColumns(['coach', 'seat_selection', 'class', 'action'])
+                ->rawColumns(['coach', 'seat_selection', 'class', 'action','duration'])
                 ->make(true);
         }
 
@@ -60,8 +69,20 @@ class AppointmentContrtoller extends Controller
     {
 
         if ($request->ajax()) {
-            $Booking = Booking::with(['user:id,username', 'appointment:id,appointment_name', 'seat:id,seat_number'])->select('id', 'user_id', 'appointment_id', 'seat_id', 'status');
-
+            $Booking = Booking::with(['user:id,username', 'appointment.class', 'seat:id,seat_number',])->select('id', 'user_id', 'appointment_id', 'seat_id', 'status','created_at');
+            
+            if ($request->has('class') && $request->class != '') {
+                $Booking->whereHas('appointment.class', function ($query) use ($request) {
+                    $query->where('name', 'like', '%' . $request->class . '%');
+                });
+            }
+    
+            // Apply date filter if provided
+            if ($request->has('date') && $request->date != '') {
+                $Booking->whereHas('appointment', function ($query) use ($request) {
+                    $query->whereDate('start_time', '=', Carbon::parse($request->date)->toDateString());
+                });
+            }
             return DataTables::of($Booking)
                 ->addColumn('username', function ($Booking) {
                     return   $Booking->user->username;
@@ -73,6 +94,24 @@ class AppointmentContrtoller extends Controller
                     else
                         return null;
                 })
+                ->addColumn('class', function ($Booking) {
+                    $class =  $Booking->appointment->class;
+                     
+                    return  $class->name ?? null; // Properly formatted anchor tag
+                
+                })
+                ->addColumn('start_time', function ($Booking) {
+                    $appointment =  $Booking->appointment;
+                    if ($appointment !== null)
+                        return   $appointment->start_time; // Properly formatted anchor tag
+                    else
+                        return null;
+                })
+                 ->addColumn('created_at',function($Booking){
+
+                    $Booking->created_at = Carbon::parse($Booking->created_at)->format('Y-m-d H:i:s'); // Format it as per your needs
+                    return $Booking->created_at;
+                 })
                 ->addColumn('seat', function ($Booking) {
                     $seat =  $Booking->seat;
                     if ($seat !== null)
@@ -80,8 +119,6 @@ class AppointmentContrtoller extends Controller
                     else
                         return null;
                 })
-
-
 
                 ->addColumn('status', function ($row) {
                     $status_case = [
@@ -92,6 +129,7 @@ class AppointmentContrtoller extends Controller
                     $badgeClass = isset($status_case[$status]) ? $status_case[$status] : 'secondary';
                     return '<span class="badge badge-' . $badgeClass . '"> ' . ucfirst($status) . '</span>';
                 })
+
                 ->addColumn('action', function ($class) {
                     return '
                                 <form action="' . 1 . '" method="POST" style="display:inline;">
@@ -100,7 +138,7 @@ class AppointmentContrtoller extends Controller
                                 <button type="submit" class="btn btn-warning btn-md"> Action</button>
                             </form>';
                 })
-                ->rawColumns(['username', 'appointment', 'seat', 'status', 'action']) // Specify columns  
+                ->rawColumns(['username', 'appointment','class' ,'seat', 'status', 'action','start_time','created_at']) // Specify columns  
                 ->make(true);
         }
 

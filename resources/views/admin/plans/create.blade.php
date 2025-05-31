@@ -92,7 +92,7 @@
                             @csrf
                             <div class="row">
                                 <!-- Plan Name -->
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="plan_name">Plan Name</label>
                                         <input type="text" name="plan_name" id="plan_name" class="form-control @error('plan_name') is-invalid @enderror" placeholder="Enter plan name" value="{{ old('plan_name') }}" required>
@@ -103,15 +103,13 @@
                                 </div>
 
                                 <!-- Type -->
-                                <div class="col-md-6">
+                                <!-- <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="type">Type</label>
                                         <input type="text" name="type" id="type" class="form-control @error('type') is-invalid @enderror" placeholder="Enter plan type" value="{{ old('type') }}" required>
-                                        @error('type')
-                                            <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
-                                        @enderror
+                 
                                     </div>
-                                </div>
+                                </div> -->
 
                                 <!-- Class -->
                                 <div class="col-md-6">
@@ -141,32 +139,22 @@
                                 </div>
 
                                 <!-- Description -->
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="description">Description</label>
-                                        <textarea name="description" id="description" rows="4" class="form-control @error('description') is-invalid @enderror" placeholder="Enter description">{{ old('description') }}</textarea>
-                                        @error('description')
-                                            <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
-                                        @enderror
-                                    </div>
-                                </div>
+                    
 
                                 <!-- Photo -->
-                                <div class="col-md-6">
+                                <!-- <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="photo">Photo</label>
                                         <input type="file" name="photo" id="photo" class="form-control-file @error('photo') is-invalid @enderror">
-                                        @error('photo')
-                                            <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
-                                        @enderror
+        
                                     </div>
-                                </div>
+                                </div> -->
 
                                 <!-- Price -->
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="price">Price (USD)</label>
-                                        <input type="number" step="0.01" name="price" id="price" class="form-control @error('price') is-invalid @enderror" placeholder="Enter price" value="{{ old('price') }}" min="0" required>
+                                        <label for="price">Price (KWD)</label>
+                                        <input type="number" step="0.01" name="price" id="price" class="form-control @error('price') is-invalid @enderror" placeholder="Enter price" value="{{ old('price') }}" min="0.1" required>
                                         @error('price')
                                             <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
                                         @enderror
@@ -184,6 +172,16 @@
                                             @endforeach
                                         </select>
                                         @error('section_plan_id')
+                                            <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="description">Description</label>
+                                        <textarea name="description" id="description" rows="4" class="form-control @error('description') is-invalid @enderror" placeholder="Enter description">{{ old('description') }}</textarea>
+                                        @error('description')
                                             <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
                                         @enderror
                                     </div>

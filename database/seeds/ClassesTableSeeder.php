@@ -10,6 +10,6 @@ class ClassesTableSeeder extends Seeder
     public function run()
     {
         // Create 10 classes
-        ClassModel::factory()->count(20)->create();
+        ClassModel::factory()->count(3)->create();
     }
 }

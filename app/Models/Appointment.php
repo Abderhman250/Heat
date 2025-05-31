@@ -15,7 +15,6 @@ class Appointment extends Model
     {
         return $this->belongsTo(ClassModel::class);
     }
-
     public function coach()
     {
         return $this->belongsTo(Coache::class);

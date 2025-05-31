@@ -18,18 +18,22 @@ class UserContrtoller extends Controller
         if ($request->ajax()) {
 
             $users = User::select(
-                'id',
-                'username',
-                'first_name',
-                'last_name',
-                'phone',
-                'gender',
-                'is_active',
-                'email',
-                'dob',
-                'photo',
-                'created_at'
-            )->where('is_coache', '=', false);
+                'users.id',
+                'users.username',
+                'users.first_name',
+                'users.last_name',
+                'users.phone',
+                'users.gender',
+                'users.is_active',
+                'users.email',
+                'users.dob',
+                'users.photo',
+                'users.created_at'
+            )
+            ->join('role_user', 'users.id', '=', 'role_user.user_id') // Assuming role_user is the pivot table
+            ->join('roles', 'role_user.role_id', '=', 'roles.id')
+            ->where('roles.name', 'user')
+            ->where('is_coache', '=', false);
 
             return DataTables::of($users)
                 // Gender Column

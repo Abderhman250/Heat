@@ -90,7 +90,29 @@
                         <!-- Form Start -->
                         <form action="{{ route('admin.coach.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
+
+
                             <div class="row">
+
+
+                            <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="username">UserName</label>
+                                        <input type="text" name="username" id="username" class="form-control @error('username') is-invalid @enderror" placeholder="Enter username" value="{{ old('username') }}" required>
+                                        @error('username')
+                                            <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="password">password</label>
+                                        <input type="password" name="password" id="password" class="form-control @error('password') is-invalid @enderror" placeholder="Enter username" value="{{ old('password') }}" required>
+                                        @error('password')
+                                            <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
+                                        @enderror
+                                    </div>
+                                </div>
                                 <!-- First Name -->
                                 <div class="col-md-6">
                                     <div class="form-group">
@@ -194,6 +216,14 @@
                                     </div>
                                 </div>
 
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="photo">Profile Photo</label>
+                                        <input type="file" name="photo" class="form-control @error('photo') is-invalid @enderror" value="{{ old('bio') }}">
+                              
+                                        @error('photo') <span class="invalid-feedback">{{ $message }}</span> @enderror
+                                    </div>
+                                </div>
                                 <!-- Submit Button -->
                                 <div class="col-md-12">
                                     <div class="box-footer text-right">

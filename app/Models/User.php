@@ -42,7 +42,8 @@ class User extends Authenticatable
         'facebook_id',
         'is_coache',
         'is_active',
-        'otp'
+        'otp',
+        'enable_notification'
     ];
 
     public function plans()
@@ -74,5 +75,10 @@ class User extends Authenticatable
     public function transactions()
     {
         return $this->hasMany(Transaction::class);
+    }
+
+    public function BookingClassUser()
+    {
+        return $this->hasMany(BookingClassUser::class);
     }
 }

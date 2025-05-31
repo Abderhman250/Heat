@@ -17,7 +17,11 @@ class ClassModelFactory extends Factory
         $seat = ["F-3", "F-4","F-5","F-6","T-6","T-5","T-4","T-3","T-2","T-1","F-1","F-2"];
 
         return [
-            'name' => $this->faker->sportClassName(),
+            'name'=>$this->faker->randomElement([
+                'Spinning room (bikes room)',
+                'Group strength / endurance class',
+                'Yoga studio',
+            ]),
             'description' => $this->faker->sportClassDescription(),
             'photo' => $this->faker->imageUrl(640, 480, 'sports', true),
             'room' => $this->faker->randomElement(['Gym Hall', 'Studio 1', 'Studio 2', 'Outdoor Field']),

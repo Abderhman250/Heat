@@ -14,7 +14,7 @@ use App\Models\Level;
 class CoachContrtoller extends Controller
 {
     public function index(Request $request)
-    {
+    {     
         if ($request->ajax()) {
             $users = User::select(
                 'id',
@@ -36,7 +36,7 @@ class CoachContrtoller extends Controller
 
             return DataTables::of($users)
                 ->addColumn('gender', function ($user) {
-                    return $user->gender == 0 ? 'Male' : 'Female';
+                    return $user->gender == 1 ? 'Male' : 'Female';
                 })
                 ->addColumn('action', function ($user) {
                     $coach = Coache::where('user_id', $user->id)->first();
@@ -55,6 +55,7 @@ class CoachContrtoller extends Controller
                                  </div>
                               </div> ';
                 })
+                
                 ->rawColumns(['photo','action']) // Render HTML in active column
 
                 ->make(true);
@@ -88,7 +89,6 @@ class CoachContrtoller extends Controller
                 'username'      => 'required|string|max:255',
                 'specialty'     => 'required|string|max:255',
                 'bio'           => 'nullable|string',
-                'level_id'      => 'nullable|exists:levels,id',
             ]);
 
             if ($request->file('photo'))
@@ -105,7 +105,7 @@ class CoachContrtoller extends Controller
                 'gender'           => $validated['gender'],
                 'email'            => $validated['email'],
                 'dob'              => $validated['dob'],
-                'level_id'         => $validated['level_id'],
+                'level_id'         => null,
                 'photo'            => $photo ?? NULL,
                 'is_coache'        => True,
                 'created_at'       => Carbon::now(),
@@ -122,6 +122,10 @@ class CoachContrtoller extends Controller
                 'created_at'      => Carbon::now(),
                 'updated_at'      => Carbon::now(),
             ]);
+            
+            $user = User::find($user_id);
+
+            $user->syncRoles(['user']);
 
             return redirect()->route('admin.coach.index');
         } catch (\Exception $e) {
@@ -157,7 +161,7 @@ class CoachContrtoller extends Controller
                 'country_code'  => $request->input('country_code'),
                 'gender'        => $request->input('gender'),
                 'email'         => $request->input('email'),
-                'dob'           => $request->input('dob'),
+                'dob'           => $request->input('dob',$user->dob),
                 'updated_at'    => Carbon::now(),
             ]);
 

@@ -49,6 +49,7 @@ class LoginRequest extends FormRequest
  
                 "password" => ["required"],
                 "login_method" => ["required"],
+                "device_token" => ["required"]
             ];
         elseif ($route == "auth.login.google")
             return [

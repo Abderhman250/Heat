@@ -21,6 +21,15 @@ use Carbon\Carbon;
 
 class UserController extends Controller
 {
+
+    public function updateNotification()
+    {
+        $user = User::find(Auth::id());
+        $user->enable_notification = !$user->enable_notification;
+        $user->save();
+        return ApiResponse::success([], "Successfully update status of notification");
+
+    }
     /**
      * Display a listing of the resource.
      *
@@ -30,7 +39,7 @@ class UserController extends Controller
     {
         //
         $user_id =  Auth::id();
-        $user = User::with(['bookings'])->find($user_id);
+        $user = User::with(['bookings','BookingClassUser'])->find($user_id);
         return ApiResponse::success(new UserResource($user), "Successfully retrieved user data",101,200);
     }
 
@@ -68,7 +77,7 @@ class UserController extends Controller
  
       
         $request =  $request->validated();
-
+ 
         $userData = [
             'phone' => $request['phone'],
             'first_name' =>  $request['first_name'],

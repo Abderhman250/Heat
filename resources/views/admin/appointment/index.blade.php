@@ -74,13 +74,12 @@
                     <th>Class</th>
                     <th>Coach</th>
                     <th>Seat Selection</th>
-                    <th>Min Participants</th>
-                    <th>Max Participants</th>
+                    <!-- <th>Min Participants</th>
+                    <th>Max Participants</th> -->
                     <th>Start Time</th>
-                    <th>End Time</th>
+                    <th>Duration</th>
                     <th>Location</th>
-                    <th>Created At</th>
-                    <th>Updated At</th>
+ 
                     <th>Actions</th>
                   </tr>
                 </thead>
@@ -94,13 +93,12 @@
                     <th>Class</th>
                     <th>Coach</th>
                     <th>Seat Selection</th>
-                    <th>Min Participants</th>
-                    <th>Max Participants</th>
+                    <!-- <th>Min Participants</th>
+                    <th>Max Participants</th> -->
                     <th>Start Time</th>
-                    <th>End Time</th>
+                    <th>Duration</th>
                     <th>Location</th>
-                    <th>Created At</th>
-                    <th>Updated At</th>
+ 
                     <th>Actions</th>
                   </tr>
                 </tfoot>
@@ -139,13 +137,14 @@
         { data: 'class', name: 'class' },
         { data: 'coach', name: 'coach' },
         { data: 'seat_selection', name: 'seat_selection' },
-        { data: 'min_participants', name: 'min_participants' },
-        { data: 'max_participants', name: 'max_participants' },
+        // { data: 'min_participants', name: 'min_participants' },
+        // { data: 'max_participants', name: 'max_participants' },
         { data: 'start_time', name: 'start_time' },
-        { data: 'end_time', name: 'end_time' },
+        { data: 'duration' ,  name:"duration"},
+        // { data: 'end_time', name: 'end_time' },
         { data: 'location', name: 'location' },
-        { data: 'created_at', name: 'created_at' },
-        { data: 'updated_at', name: 'updated_at' },
+        // { data: 'created_at', name: 'created_at' },
+        // { data: 'updated_at', name: 'updated_at' },
         {
           data: 'action',
           name: 'action',

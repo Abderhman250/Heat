@@ -67,13 +67,15 @@
                                     <thead>
                                         <tr>
                                             <th>ID</th>
+                                            <th>Photo </th>
+                                            <th>Class Type </th>
                                             <th>Name</th>
                                             <th>Description</th>
                                             <th>Room</th>
                                             <th>Seat Selection Required</th>
-                                            <th>Capacity</th>
+                                            <!-- <th>Capacity</th> -->
                                             <th>Created At</th>
-                                            <th>Class Type ID</th>
+                                            
                                             <th>Edit</th>
                                         </tr>
                                     </thead>
@@ -83,13 +85,15 @@
                                     <tfoot>
                                         <tr>
                                             <th>ID</th>
+                                            <th>Photo </th>
+                                            <th>Class Type </th>
                                             <th>Name</th>
                                             <th>Description</th>
                                             <th>Room</th>
                                             <th>Seat Selection Required</th>
-                                            <th>Capacity</th>
+                                            <!-- <th>Capacity</th> -->
                                             <th>Created At</th>
-                                            <th>Class Type ID</th>
+                                            
                                             <th>Edit</th>
                                         </tr>
                                     </tfoot>
@@ -128,6 +132,14 @@
                     name: 'id'
                 },
                 {
+                    data:'photo',
+                    name:'photo'
+                },
+                {
+                    data: 'class_type',
+                    name: 'class_type'
+                },
+                {
                     data: 'name',
                     name: 'name'
                 },
@@ -143,18 +155,15 @@
                     data: 'seat_selection_required',
                     name: 'seat_selection_required'
                 },
-                {
-                    data: 'capacity',
-                    name: 'capacity'
-                },
+                // {
+                //     data: 'capacity',
+                //     name: 'capacity'
+                // },
                 {
                     data: 'created_at',
                     name: 'created_at'
                 },
-                {
-                    data: 'class_type_id',
-                    name: 'class_type_id'
-                },
+         
                 {
                     data: 'edit',
                     name: 'edit',

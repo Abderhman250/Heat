@@ -10,6 +10,9 @@ use App\Http\Controllers\Admin\LoginContrtoller;
 use App\Http\Controllers\Admin\PlansController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\UserContrtoller;
+use App\Http\Controllers\Admin\OfficeManagerController;
+use App\Http\Controllers\Admin\NotificationController;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\SectionPlanContrtoller;
@@ -36,7 +39,7 @@ Route::get('/login', function () {
 
 Route::post('/login', [LoginContrtoller::class, "login"])->name('admin.login');
 
-Route::middleware(['role:admin'])->group(function () {
+Route::middleware(['role:admin|office_manager'])->group(function () {
     Route::post('/logout', [LoginContrtoller::class, 'logout'])->name('admin.logout');
 
 
@@ -62,6 +65,9 @@ Route::middleware(['role:admin'])->group(function () {
     Route::group(['prefix' => 'admins'], function () {
 
         Route::get('/', [AdminContrtoller::class, 'index'])->name('admin.admins.index');
+        Route::get('/{id}/edit', [AdminContrtoller::class, 'edit'])->name('admin.admins.edit');
+        Route::put('/{id}', [AdminContrtoller::class, 'update'])->name('admin.admins.update');
+
     });
 
 
@@ -112,12 +118,28 @@ Route::middleware(['role:admin'])->group(function () {
         Route::get('/', [PlansController::class, 'index'])->name('admin.plans.index');
         Route::get('/create', [PlansController::class, 'create'])->name('admin.plans.create');
         Route::post('/',      [PlansController::class, 'store'])->name('admin.plans.store');
+        Route::post('/deactivate',      [PlansController::class, 'deactivatePlan'])->name('admin.plans.deactivate');
+        Route::post('/activate',      [PlansController::class, 'activatePlan'])->name('admin.plans.activate');
+
+
+         
+
+    });
+    
+    Route::group(['prefix' => 'notifications'], function () {
+        Route::get('/',       [NotificationController::class, 'index'])->name('admin.notifications.index');
+        Route::get('/create', [NotificationController::class, 'create'])->name('admin.notifications.create');
+        Route::post('/push',  [NotificationController::class, 'push'])->name('admin.notifications.push');
+        
     });
 
     Route::group(['prefix' => 'section_plans'], function () {
         Route::get('/',       [PlansController::class, 'section_plans'])->name('admin.section_plans.index');
         Route::get('/create', [SectionPlanContrtoller::class, 'create'])->name('admin.section_plans.create');
         Route::post('/',      [SectionPlanContrtoller::class, 'store'])->name('admin.section_plans.store');
+        Route::get('/{id}/edit',[SectionPlanContrtoller::class, 'edit'])->name('admin.section_plans.edit'); // Show form to edit level
+        Route::put('/{id}/update',[SectionPlanContrtoller::class, 'update'])->name('admin.section_plans.update'); // Show form to edit level
+
     });
 
 
@@ -128,5 +150,15 @@ Route::middleware(['role:admin'])->group(function () {
 
         Route::get('/{id}/edit',    [LevelController::class, 'edit'])->name('admin.level.edit'); // Show form to edit level
         Route::put('/{id}/update',  [LevelController::class, 'update'])->name('admin.level.update'); // Update level
+    });
+
+
+    Route::group(['prefix' => 'office_manager'], function () {
+
+        Route::get('/',       [OfficeManagerController::class, 'index'])->name('admin.office_manager.index');
+        Route::get('/create', [OfficeManagerController::class, 'create'])->name('admin.office_manager.create');
+        Route::post('/',      [OfficeManagerController::class, 'store'])->name('admin.office_manager.store');
+        Route::get('/{id}/edit',    [OfficeManagerController::class, 'edit'])->name('admin.office_manager.edit');
+            Route::put('/{id}/update',  [OfficeManagerController::class, 'update'])->name('admin.office_manager.update');
     });
 });

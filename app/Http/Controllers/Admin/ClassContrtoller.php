@@ -24,15 +24,26 @@ class ClassContrtoller extends Controller
                 return  $class->photo ? '<img class="media-object rounded-circle" width="50" height="50"
                 src="' . ($class->photo) . '"
                 alt="image">'  :null;
+            })   
+            ->addColumn('class_type', function ($class) {
+                return  $class->classType->type_name;
             })             
-
+            
             ->addColumn('edit', function ($Level) {
                 return '<a href="' . route('admin.classes.edit', $Level->id) . '" 
                             class="btn btn-sm btn-block btn-outline-info btn-xs">
                             <i class="fas fa-edit mr-1"></i> Edit
                         </a>';
             })
-            ->rawColumns(['edit'])
+            ->addColumn('photo', function ($user) {
+                return    '
+                          <div class="user-panel mt-1 pb-1 mb-1 d-flex" >
+                            <div class="image" >
+                                <img src="'.$user->photo.'" class="img-circle elevation-2" alt="User Image" style="height: 4.1rem;width: 4.1rem;">
+                             </div>
+                          </div> ';
+            })
+            ->rawColumns(['edit','class_type','photo'])
 
             ->make(true);
         }
@@ -67,12 +78,13 @@ class ClassContrtoller extends Controller
                 $validated = $request->validate([
                     'name'                    => 'required|string|max:255',
                     'room'                    => 'nullable|string|max:255',
-                    'capacity'                => 'required|integer|min:1',
+                    // 'capacity'                => 'required|integer|min:1',
                     'seat_selection_required' => 'required|boolean',
-                    'type_name'               => 'required|string|in:sint,odio,occaecati,consequuntur',
-                    'booking_process'         => 'required|string|in:In-Person,Online',
+                    'type_name'               => 'required|string|in:Spinning room (bikes room),Group strength / endurance class,Yoga studio',
+                    // 'booking_process'         => 'required|string|in:In-Person,Online',
                     'description'             => 'nullable|string',
                     'photo'                   => 'nullable|image|max:2048',
+                    
                 ]);
  
                 if($request->file('photo'))
@@ -80,7 +92,7 @@ class ClassContrtoller extends Controller
 
                 $class_type_id = ClassType::insertGetId([
                     'type_name'       => $validated['type_name'],
-                    'booking_process' => $validated['booking_process'],
+                    'booking_process' => 'In-Person',
                     'created_at'      => Carbon::now(),
                     'updated_at'      => Carbon::now(),
                 ]);
@@ -88,8 +100,8 @@ class ClassContrtoller extends Controller
               $ClassModel=   ClassModel::create([
                     'name'                         => $validated['name'],
                     'room'                         => $validated['room'],
-                    'capacity'                     => $validated['capacity'],
-                    'seat_selection_required'      => $validated['seat_selection_required'],
+                    'capacity'                     => 200,
+                    'seat_selection_required'      => ($request->seat_selection_required == "1")?true:false,
                     'description'                  => $validated['description'],
                     'class_type_id'                => $class_type_id,
                     'photo'                        => $photo ?? NULL,
@@ -118,7 +130,8 @@ class ClassContrtoller extends Controller
     public function edit($id)
     {
         $class = ClassModel::findOrFail($id); // Fetch the level by ID
-        return view('admin.classes.edit', compact('class'));
+        $class_type = ClassType::all();
+        return view('admin.classes.edit', compact('class','class_type'));
     }
 
 
@@ -142,9 +155,10 @@ class ClassContrtoller extends Controller
             $class->update([
                 'name'                    => $validated['name'],
                 'room'                    => $validated['room'],
-                'capacity'                => $validated['capacity'],
+                'capacity'                => 200,
                 'description'             => $validated['description'],
                 'photo'                   => $photo,
+                'class_type_id'           => $validated['class_type_id'],
                 'updated_at'              => Carbon::now(),
             ]);
 

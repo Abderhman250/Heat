@@ -22,7 +22,9 @@ class HistoryPlansResource extends JsonResource
                 "plan_class"=>$this->plan->class->name,
                 "plan_photo"=>$this->plan->photo,
                 "class_type"=>$this->plan->class->classType->type_name,
-                "class_capacity"=>$this->plan->class->capacity        
+                "class_capacity"=>$this->plan->class->capacity,       
+                "price"=>$this->plan->price        
+
             ] ,
             "start_date"=>$this->start_date,
             "end_date"=>$this->end_date,

@@ -9,6 +9,7 @@ use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class DashboardContrtoller extends Controller
 {
@@ -16,12 +17,21 @@ class DashboardContrtoller extends Controller
 
 
     public function index()
-    {
+    {   
         $bookingClassUser = BookingClassUser::select(
-            DB::raw('SUM(class_completed) as total_class_completed'),
-            DB::raw('SUM(quantity) as total_quantity')
+            DB::raw('COALESCE(SUM(class_completed), 0) as total_class_completed'),
+            DB::raw('COALESCE(SUM(quantity),0) as total_quantity')
         )->first();
-    
+
+        $bookingClassWeek = BookingClassUser::select(
+            DB::raw('COALESCE(SUM(class_completed), 0) as total_class_completed'),
+            DB::raw('COALESCE(SUM(quantity),0) as total_quantity'),
+            DB::raw('DATE(created_at) as date')
+            )
+            ->where('created_at', '>', Carbon::now()->subDays(15))
+            ->groupBy('date')
+        ->get();
+ 
         $users = User::where('is_coache', 0)->count();
         $coaches = User::where('is_coache', 1)->count();
     
@@ -40,6 +50,7 @@ class DashboardContrtoller extends Controller
             "users" => $users,
             "coaches" => $coaches,
             "transactions" => $transactions,
+            "bookingClassWeek" =>$bookingClassWeek
         ]);
     }
     

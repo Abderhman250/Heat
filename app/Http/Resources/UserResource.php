@@ -28,6 +28,8 @@ class UserResource extends JsonResource
             'photo' => $this->photo,
             'gender' => $this->gender ,
             'email' => $this->email,
+            'notification_enable' => (bool) $this->enable_notification,
+            'booking_users' => BookingClassUserResource::collection($this->bookingClassUser),
         ];
  
 

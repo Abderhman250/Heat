@@ -29,7 +29,7 @@ class RegisterController extends Controller
         $request =  $request->validated();
         $level =  Level::where('required_classes',">",0)->first();
         
-        User::create([
+       $user = User::create([
             "email" =>   $request["email"],
             "username"=>$request["username"],
             "password" =>   bcrypt($request["password"]),
@@ -41,8 +41,10 @@ class RegisterController extends Controller
             "level_id"=>$level->id,
  
         ]);
-
  
+
+        $user->syncRoles(['user']);
+        
        return ApiResponse::success([],"Registration completed successfully.",100,201);
     }
  

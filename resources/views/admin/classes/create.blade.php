@@ -117,7 +117,7 @@
                                 </div>
 
                                 <!-- Capacity -->
-                                <div class="col-md-6">
+                                <!-- <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="capacity">Capacity</label>
                                         <input type="number" name="capacity" id="capacity" class="form-control @error('capacity') is-invalid @enderror" placeholder="Enter capacity" value="{{ old('capacity') }}" min="0" required>
@@ -125,7 +125,7 @@
                                         <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
                                         @enderror
                                     </div>
-                                </div>
+                                </div> -->
 
                                 <!-- Seat Selection -->
                                 <div class="col-md-6">
@@ -142,16 +142,15 @@
                                 </div>
 
                                 <!-- Type Name -->
-                                <div class="col-md-6">
+                                <div class="col-md-6">     
                                     <div class="form-group">
-                                        <label for="type_name">Type Name</label>
+                                        <label for="type_name">Class Type </label>
                                         <select name="type_name" id="type_name" class="form-control select2 @error('type_name') is-invalid @enderror">
                                             <option value="">Select Type</option>
-                                            <option value="sint" {{ old('type_name') == 'sint' ? 'selected' : '' }}>sint</option>
-                                            <option value="odio" {{ old('type_name') == 'odio' ? 'selected' : '' }}>odio</option>
-                                            <option value="occaecati" {{ old('type_name') == 'occaecati' ? 'selected' : '' }}>occaecati</option>
-                                            <option value="consequuntur" {{ old('type_name') == 'consequuntur' ? 'selected' : '' }}>consequuntur</option>
-                                        </select>
+                                            <option value="Spinning room (bikes room)" {{ old('type_name') == 'Spinning room (bikes room)' ? 'selected' : '' }}>Spinning room (bikes room)</option>
+                                            <option value="Group strength / endurance class" {{ old('type_name') == 'Group strength / endurance class' ? 'selected' : '' }}>Group strength / endurance class</option>
+                                            <option value="Yoga studio" {{ old('type_name') == 'Yoga studio' ? 'selected' : '' }}>Yoga studio</option>
+                                         </select>
                                         @error('type_name')
                                         <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
                                         @enderror
@@ -159,18 +158,7 @@
                                 </div>
 
                                 <!-- Booking Process -->
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="booking_process">Booking Process</label>
-                                        <select name="booking_process" id="booking_process" class="form-control select2 @error('booking_process') is-invalid @enderror">
-                                            <option value="In-Person" {{ old('booking_process') == 'In-Person' ? 'selected' : '' }}>In-Person</option>
-                                            <option value="Online" {{ old('booking_process') == 'Online' ? 'selected' : '' }}>Online</option>
-                                        </select>
-                                        @error('booking_process')
-                                        <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
-                                        @enderror
-                                    </div>
-                                </div>
+ 
 
                                 <!-- Description -->
                                 <div class="col-md-12">
@@ -225,5 +213,22 @@
             allowClear: true
         });
     });
+
+    function showPreview(event) {
+        const file = event.target.files[0];
+        const preview = document.getElementById('photo-preview');
+        
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block'; // Show the preview image
+            };
+            reader.readAsDataURL(file);
+        } else {
+            preview.src = '';
+            preview.style.display = 'none'; // Hide the preview if no file is selected
+        }
+    }
 </script>
 @endsection

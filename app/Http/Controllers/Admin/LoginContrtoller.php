@@ -23,13 +23,18 @@ class LoginContrtoller extends Controller
         if ($user && Hash::check($request->password, $user->password)) {
             // Log the user in
             Auth::login($user);
+            $redirect = [
+                'admin' => 'admin/dashboard',
+                'office_manager' => 'admin/booking'
+            ];
+            
+            if ($user->hasRole(['admin', 'office_manager'])) {
 
-            // Check if the user has the 'admin' role
-            if ($user->hasRole('admin')) {
-                // Redirect admin to the admin dashboard
-                return redirect()->intended('admin/dashboard')->with('success', 'Login successful!');
+                $role = $user->hasRole('admin') ? 'admin' : 'office_manager';
+
+                return redirect()->intended($redirect[$role] ?? 'admin/dashboard')
+                                 ->with('success', 'Login successful!');
             } else {
-                // If user is not an admin, log out and redirect back with an error message
                 Auth::logout();
                 return redirect()->back()->withErrors(['login' => 'You do not have permission to access this area.'])->withInput();
             }

@@ -154,7 +154,15 @@
                                         @error('email') <span class="invalid-feedback">{{ $message }}</span> @enderror
                                     </div>
                                 </div>
-
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="dob">Date of Birth</label>
+                                        <input type="date" name="dob" id="dob" class="form-control @error('dob') is-invalid @enderror" value="{{ old('dob', $coach->user->dob) }}">
+                                        @error('dob')
+                                            <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
+                                        @enderror
+                                    </div>
+                                </div>
                                 <!-- Specialty -->
                                 <div class="col-md-6">
                                     <div class="form-group">

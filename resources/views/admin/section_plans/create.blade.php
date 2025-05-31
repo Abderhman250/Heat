@@ -94,7 +94,7 @@
                                 <!-- Section Name -->
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="section_name">Section Name</label>
+                                        <label for="section_name">Plan Header Name </label>
                                         <input type="text" name="section_name" id="section_name" class="form-control @error('section_name') is-invalid @enderror" placeholder="Enter section name" value="{{ old('section_name') }}" required>
                                         @error('section_name')
                                             <span class="invalid-feedback"><strong>{{ $message }}</strong></span>

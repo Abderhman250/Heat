@@ -135,7 +135,7 @@
                                 </div>
 
                                 <!-- Min Participants -->
-                                <div class="col-md-6">
+                                <!-- <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="min_participants">Minimum Participants</label>
                                         <input type="number" name="min_participants" id="min_participants" class="form-control @error('min_participants') is-invalid @enderror" placeholder="Enter minimum participants" value="{{ old('min_participants') }}">
@@ -143,10 +143,10 @@
                                             <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
                                         @enderror
                                     </div>
-                                </div>
+                                </div> -->
 
                                 <!-- Max Participants -->
-                                <div class="col-md-6">
+                                <!-- <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="max_participants">Maximum Participants</label>
                                         <input type="number" name="max_participants" id="max_participants" class="form-control @error('max_participants') is-invalid @enderror" placeholder="Enter maximum participants" value="{{ old('max_participants') }}">
@@ -154,7 +154,7 @@
                                             <span class="invalid-feedback"><strong>{{ $message }}</strong></span>
                                         @enderror
                                     </div>
-                                </div>
+                                </div> -->
 
                                 <!-- Start Time -->
                                 <div class="col-md-6">

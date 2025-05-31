@@ -250,9 +250,9 @@ class AppointmentController extends Controller
         $data = [];
         $SeatPointCollection =  SeatPointCollection::collection($seatPoints->groupBy('line'));
 
-        foreach ($SeatPointCollection as $key => $value)
-            $data[][$key] =   $value;
-
+        foreach ($SeatPointCollection as $key => $value){
+            $data[]['seat'] =   $value;
+        }
 
         return ApiResponse::success(
             [

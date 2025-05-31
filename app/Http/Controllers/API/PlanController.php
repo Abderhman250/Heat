@@ -30,8 +30,11 @@ class PlanController extends Controller
     public function index(Request $request)
     {
         $perPage = (int) $request->query('per_page', 5);
-        $plans = SectionPlan::with('plans')
+        $plans = SectionPlan::with(['plans' => function($query) {
+            $query->where('active', true); // assuming 'is_active' is the field for active status
+        }])
             ->has('plans')
+            // ->whereHas('plans',)
             ->paginate($perPage);
         // $plans = ClassModel::with('plans')
         // ->has('plans')
@@ -42,7 +45,7 @@ class PlanController extends Controller
                 'pagination' => ApiResponse::paginationData($plans),
 
             ],
-            'Successfully list coach resource.',
+            'Successfully list plans resource.',
             314
         );
     }
@@ -66,19 +69,16 @@ class PlanController extends Controller
      */
     public function show(PlanRequest $request, $id)
     {
-        $perPage = (int) $request->query('per_page', 5);
-        $plans = ClassModel::with('plans')
-            ->has('plans')
-            ->paginate($perPage);
-
+ 
+        $plans =  Plan::find($request->plan_id);
+ 
         return ApiResponse::success(
             [
-                "collect" => PlanShowResource::collection($plans),
-                'pagination' => ApiResponse::paginationData($plans),
-
+                "collect" => new PlanShowResource ($plans),
+ 
             ],
-            'Successfully list coach resource.',
-            314
+            'Successfully show plan resource.',
+            315
         );
     }
 
@@ -94,15 +94,15 @@ class PlanController extends Controller
     {
         $perPage = (int) $request->query('per_page', 5);
 
-        $plans = UserPlan::orderBy('created_at','desc')->paginate($perPage);
+        $plans = UserPlan::where("user_id",auth()->user()->id)->orderBy('created_at','desc')->paginate($perPage);
 
         return ApiResponse::success(
             [
                 "collect" => HistoryPlansResource::collection($plans),
 
             ],
-            'Successfully list coach resource.',
-            314
+            'Successfully list  history plans resource.',
+            316
         );
     }
 
@@ -144,7 +144,7 @@ class PlanController extends Controller
                     ],
                     [
                         'quantity' => DB::raw('quantity + ' . $Plan->total_classes),  // Increment quantity if record exists, set it if not
-                        'class_completed' => true,  // Mark as completed if relevant
+                        'class_completed' => 0,  // Mark as completed if relevant
                     ]
                 );
             }
@@ -156,7 +156,7 @@ class PlanController extends Controller
 
             return response()->json(['error' => 'Checkout failed, please try again later.'], 500);
         }
-        return ApiResponse::success([], 'Transaction successfully created', 316);
+        return ApiResponse::success([], 'Transaction successfully created', 317);
     }
 
 

@@ -67,12 +67,14 @@ Route::prefix('auth')->group(function () {
  
 Route::middleware(['auth:api'])->group(function () {
     
-    Route::put('/change_password',  [UserController::class, 'changePassword'])->name('change.password');
+    Route::put('/change_password',      [UserController::class, 'changePassword'])->name('change.password');
    
     Route::get('/home', [HomeController::class, 'homePageData'])->name('home.page'); 
 
     Route::group(['prefix' => 'user'], function () {
-      
+
+        Route::post('/update-notification',  [UserController::class, 'updateNotification'])->name('auth.updateNotification');
+
         Route::get('info-by-user/{user_id}', [UserController::class, 'infoByUser'])->name('info.by.user');
         
         Route::get('/info', [UserController::class, 'info'])->name('user.info');
@@ -130,7 +132,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::prefix('plans')->group(function () {
         
         Route::get('/', [PlanController::class, 'index'])->name('plan.index');
-        Route::get('/{plan_id}', [PlanController::class, 'historyPlans'])->name('plan.show');
+        Route::get('/{plan_id}', [PlanController::class, 'show'])->name('plan.show');
 
     });
 

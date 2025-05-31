@@ -47,8 +47,10 @@
                               <th>Gender</th>
                               <th>Email</th>
                               <th>Date of Birth</th>
-                              <th>Photo</th>
+                              <!-- <th>Photo</th> -->
                               <th>Is Active</th>
+                              <th>Action</th>
+
                
                            </tr>
                         </thead>
@@ -65,9 +67,10 @@
                               <th>Gender</th>
                               <th>Email</th>
                               <th>Date of Birth</th>
-                              <th>Photo</th>
+                              <!-- <th>Photo</th> -->
                               <th>Is Active</th>
-                             
+                              <th>Action</th>
+                              
                            </tr>
                         </tfoot>
                      </table>
@@ -132,17 +135,21 @@
                data: 'dob',
                name: 'dob'
             },
-            {
-               data: 'photo',
-               name: 'photo',
-               orderable: false,
-               searchable: false
-            },
+            // {
+            //    data: 'photo',
+            //    name: 'photo',
+            //    orderable: false,
+            //    searchable: false
+            // },
             {
                data: 'is_active',
                name: 'is_active'
             },
- 
+            {
+              data: 'action',
+              name: 'action'
+            },
+
          ],
          "paging": true,
          "lengthChange": true,

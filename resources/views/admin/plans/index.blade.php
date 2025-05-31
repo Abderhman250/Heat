@@ -5,6 +5,28 @@
 <link rel="stylesheet" href="{{ asset('admin/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
 <link rel="stylesheet" href="{{ asset('admin/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
 <link rel="stylesheet" href="{{ asset('admin/plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
+<style>
+    /* Button Styling */
+    .btn-primary {
+        padding: 10px 20px;
+        font-size: 16px;
+        font-weight: bold;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: #004085;
+        color: #fff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Align the button to the right */
+    .card-header .btn-create {
+        float: right;
+    }
+</style>
+
 @endsection
 
 @section('content')
@@ -34,19 +56,25 @@
           <div class="card">
             <div class="card-header">
               <h3 class="card-title">Plans List</h3>
-              
+              <a href="{{ route('admin.plans.create') }}" class="btn btn-primary btn-create">
+                                    <i class="fas fa-plus-circle"></i> Create Plan
+              </a>
             </div>
             <div class="card-body">
               <table id="userTable" class="table table-bordered table-striped">
                 <thead>
                   <tr>
                     <th>ID</th>
-                    <th>Photo</th>
+                    <!-- <th>Photo</th> -->
                     <th>Plan Name</th>
+                    <!-- <th>Plan Type</th> -->
+                    <th>Plan Header</th>
                     <th>Total Classes</th>
                     <th>Price</th>
                     <th>Class</th>
                     <th>Description</th>
+                    <th>Action</th>
+
                   </tr>
                 </thead>
                 <tbody>
@@ -54,13 +82,16 @@
                 <tfoot>
                   <tr>
                     <th>ID</th>
-                    <th>Photo</th>
+                    <!-- <th>Photo</th> -->
                     <th>Plan Name</th>
+                    <!-- <th>Plan Type</th> -->
+                    <th>Plan Header</th>
                     <th>Total Classes</th>
                     <th>Price</th>
                     <th>Class</th>
                     <th>Description</th>
-                  </tr>
+                    <th>Action</th>
+                    </tr>
                 </tfoot>
               </table>
 
@@ -94,12 +125,20 @@
       "ajax": "{{ route('admin.plans.index') }}", // Adjust the route if necessary
       columns: [
         { data: 'id', name: 'id' },
-        { data: 'photo', name: 'photo' },
+        // { data: 'photo', name: 'photo' },
         { data: 'plan_name', name: 'plan_name' },
+        // { data: 'type', name: 'type' },
+        { data: 'sectionPlan', name: 'sectionPlan' },
         { data: 'total_classes', name: 'total_classes' },
         { data: 'price', name: 'price' },
         { data: 'class', name: 'class' },
         { data: 'description', name: 'description' },
+        {
+               data: 'active',
+               name: 'active',
+               orderable: false,
+               searchable: false
+            }
       ],
       "paging": true,
       "lengthChange": true,
@@ -116,5 +155,55 @@
       "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
     }).buttons().container().appendTo('#userTable_wrapper .col-md-6:eq(0)');
   });
+
+
+
+  $(document).on('click', '.activate-plan, .deactivate-plan', function() {
+    let palnId = $(this).data('id');
+    let button = $(this); // Reference to the clicked button
+    let action = button.hasClass('activate-plan') ? 'deactivate':'activate' ;
+    
+    // Change button text and style immediately
+    if (action === 'activate') {
+        button.text('Activating...').attr('disabled', true).removeClass('btn-success').addClass('btn-secondary');
+    } else {
+        button.text('Deactivating...').attr('disabled', true).removeClass('btn-danger').addClass('btn-secondary');
+    }
+ 
+    $.ajax({
+        url: `/admin/plans/${action}`, // Replace with your route URL
+        type: 'POST',
+        data: {
+            id: palnId,
+            _token: '{{ csrf_token() }}' // CSRF token for security
+        },
+        success: function(response) {
+         Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: response.message,
+                timer: 2000, // Auto-close in 2 seconds
+                showConfirmButton: false
+            });
+
+            // Reload the table
+            $('#users-table').DataTable().ajax.reload();
+        },
+        error: function() {
+         Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Something went wrong. Please try again.'
+            });
+
+            // Revert button changes on error
+            if (action === 'activate') {
+                button.text('Activate').attr('disabled', false).removeClass('btn-secondary').addClass('btn-success');
+            } else {
+                button.text('Deactivate').attr('disabled', false).removeClass('btn-secondary').addClass('btn-danger');
+            }
+        }
+    });
+});
 </script>
 @endsection

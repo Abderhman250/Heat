@@ -78,12 +78,13 @@ class AppointmentShowResource extends JsonResource
         ];
     }
 
-    private function  timeClass()
+   private function  timeClass()
     {
 
         $startTime = Carbon::parse($this->start_time);
         $finishTime = Carbon::parse($this->end_time);
-
-        return  $finishTime->diffForHumans($startTime);
+        
+        // Calculate the difference in minutes
+        return $startTime->diffInMinutes($finishTime);
     }
 }

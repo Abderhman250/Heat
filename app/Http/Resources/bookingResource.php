@@ -43,7 +43,7 @@ class bookingResource extends JsonResource
 
                 'start_time' => ($appointment->start_time !== null) ? $this->formatTime($appointment->start_time)  : null,
                 'end_time' => ($appointment->end_time !== null) ? $this->formatTime($appointment->end_time)  : null,
-                'time_class' => $this->timeClass(),
+                'time_class' => $this->timeClass($appointment),
                 'location' => $appointment->location,
             ]
 
@@ -66,13 +66,13 @@ class bookingResource extends JsonResource
         ];
     }
 
-
-    private function  timeClass()
+    private function  timeClass($appointment)
     {
 
         $startTime = Carbon::parse($this->start_time);
         $finishTime = Carbon::parse($this->end_time);
-
-        return  $finishTime->diffForHumans($startTime);
+        
+        // Calculate the difference in minutes
+        return $startTime->diffInMinutes($finishTime);
     }
 }
